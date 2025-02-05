@@ -1,0 +1,54 @@
+# Cabal build artifacts
+/dist-newstyle/
+/dist/
+/cabal.project.local
+/cabal.sandbox.config
+/ghc.environment.*
+
+# Stack build artifacts
+/.stack-work/
+
+# Haskell IDEs
+/.hie/
+/.hie/
+/.hie-bios/
+/.ghc.environment.*
+
+# Nix build artifacts
+/result
+/.cache/
+/.nix-defexpr/
+/.nix-gcroots/
+/.nix-profile/
+/.nix-defexpr/
+/.nix-channels
+
+# Binary files
+*.o
+*.hi
+*.dyn_o
+*.dyn_hi
+
+# GHCi
+.ghci
+
+# Haskell REPL history
+.ghc-repl-history
+.ghc-repl-command-history
+
+# Haskell Language Server
+.ghcide/
+.hls/
+.hie/
+.hie-bios/
+
+# Vim temporary files
+*.swp
+*.swo
+
+# Emacs temporary files
+*~
+\#*\#
+
+# VSCode
+.vscode/
