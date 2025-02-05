@@ -73,3 +73,6 @@ executable book01
 
     -- Base language which the package is written in.
     default-language: Haskell2010
+   
+   -- GHC options
+   ghc-options:      -F -pgmF ormolu
