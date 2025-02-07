@@ -37,8 +37,35 @@ averageVelocity2 t dt p = (p (t + dt/2) - p (t - dt/2)) / dt
 type Derivative = (R -> R) -> (R -> R)
 
 
+-- analitical derivative
+derivative :: R -> Derivative
+derivative dt x t = (x (t + dt / 2 ) - x (t - dt / 2)) / dt
+
+
+-- Simple excerise
+-- car position function described by the following function
+carPosition :: PositionFunction
+carPosition = cos
+
+-- find the velocity function of the car
+velFromPosition :: R -> PositionFunction -> VelocityFunction
+velFromPosition = derivative
+-- I should list the assumptions of constant velocity
+
+-- find the acceleration function of the car
+-- list assumptions for constant acceleration
+accFromVelocity :: R -> VelocityFunction -> AccelerationFunction
+accFromVelocity = derivative
+
+-- constant acceleration equations 
+-- used over and over again in introductury physics
+
+
+
+
+
 main :: IO ()
-main = 
-  do 
+main =
+  do
     putStrLn "Hello, Haskell!"
     putStrLn "Hello, Haskell!"
