@@ -81,6 +81,59 @@ eulerPi x = sum [1 / (n^(2 :: Integer)) | n <- [1 .. x]]
 -- very helpful to think about them in  as
 -- one input thinking
 
+-- operations as higher order functions (slide)
+-- Lets talk about  numerical integration
+-- acceleration is the rate of change of velocity
+-- acceleraetion is the derivative of velocity
+-- velocity is the rate of change of position
+-- but what about the converse problem?
+-- what if we know the acceleration and we want to find the position
+-- we can use the integral to solve this problem
+-- the integral is the inverse of the derivative
+-- SLIDE introducing integrations page 81
+-- lets define the integral
+type DigitalIntegration =
+  (R -> R) -- function
+  -> R -- lower bound
+  -> R -- upper bound
+  -> R -- result
+
+type Integral = R -> DigitalIntegration
+
+
+-- using mid point rule
+integral :: R -> DigitalIntegration
+integral dt f a b =
+  sum [f  t * dt | t <- [a + dt/2, a + 3*dt/2 .. b -dt/2]]
+
+-- using the fundamental teorem of calculus
+-- we will implement the antiderivative
+type Antiderivative =
+  R -- initial value
+  -> (R -> R) -- function
+  -> (R -> R) -- antiderivative function
+
+-- the antiderivative is closely to the integral
+-- the antiderivative is the inverse of the derivative
+
+antiderivative :: R -> Antiderivative
+antiderivative dt vo a t = vo + integral dt a 0 t
+
+-- now that we have the antiderivative we can use it to find the position
+velFromAcc :: R --dt
+            -> R -- initial velocity
+            -> AccelerationFunction
+            -> VelocityFunction
+velFromAcc = antiderivative
+
+positionFromVel :: R -- dt
+                -> R -- initial position
+                -> VelocityFunction
+                -> PositionFunction
+positionFromVel = antiderivative
+
+-- now that we have these two tools derivative and antiderivative lets graph
+-- some models
 
 
 main :: IO ()
