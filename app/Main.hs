@@ -1,5 +1,6 @@
-
 module Main where
+import Data.List ()
+import Graphics.Gnuplot.Simple
 
 -- one dimentional movement
 -- one of the main advantages of using haskell
@@ -11,6 +12,7 @@ module Main where
 -- lets make some basic definitions 
 type R = Double
 type Time = R
+type Position = R
 type Acceleration = R
 type Velocity = R
 type Distance = R
@@ -71,7 +73,7 @@ dum f a b = sum [f i | i <- [a .. b]]
 
 -- testst
 test :: Integer
-test = dum (^(2 :: Integer)) 1 10
+test = dum (^ (2 :: Integer)) 1 10
 
 eulerPi :: (Enum a, Fractional a) => a -> a
 eulerPi x = sum [1 / (n^(2 :: Integer)) | n <- [1 .. x]]
@@ -133,8 +135,19 @@ positionFromVel :: R -- dt
 positionFromVel = antiderivative
 
 -- now that we have these two tools derivative and antiderivative lets graph
--- some models
+-- some models of constant acceleration motion
 
+
+-- plot the position of a car with constant acceleration
+
+positionCV :: Position -> Velocity -> Time -> Position
+positionCV x0 v0 t = v0*t + x0
+
+velocityCA :: Velocity -> Acceleration -> Time -> Velocity
+velocityCA v0 a t = v0 + a*t
+
+positionCA :: Position -> Velocity -> Acceleration -> Time -> Position
+positionCA x0 v0 a t = x0 + v0*t + 0.5*a*t**2
 
 main :: IO ()
 main =
