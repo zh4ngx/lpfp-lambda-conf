@@ -63,6 +63,9 @@ accFromVelocity = derivative
 -- Lists!
 -- Lists are a fundamental data structure in Haskell
 -- sum notation 
+
+-- recursion over loops
+
 dum :: (Num a, Enum t) => (t -> a) -> t -> t -> a
 dum f a b = sum [f i | i <- [a .. b]]
 
