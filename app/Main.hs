@@ -1,6 +1,5 @@
 
 module Main where
-import GHC.Generics (D)
 
 -- one dimentional movement
 -- one of the main advantages of using haskell
@@ -38,6 +37,7 @@ type Derivative = (R -> R) -> (R -> R)
 
 
 -- analitical derivative
+-- explain derivative here
 derivative :: R -> Derivative
 derivative dt x t = (x (t + dt / 2 ) - x (t - dt / 2)) / dt
 
@@ -60,7 +60,23 @@ accFromVelocity = derivative
 -- constant acceleration equations 
 -- used over and over again in introductury physics
 
+-- Lists!
+-- Lists are a fundamental data structure in Haskell
+-- sum notation 
+dum :: (Num a, Enum t) => (t -> a) -> t -> t -> a
+dum f a b = sum [f i | i <- [a .. b]]
 
+-- testst
+test :: Integer
+test = dum (^(2 :: Integer)) 1 10
+
+eulerPi :: (Enum a, Fractional a) => a -> a
+eulerPi x = sum [1 / (n^(2 :: Integer)) | n <- [1 .. x]]
+
+-- higher order functions
+-- how to think about them
+-- very helpful to think about them in  as
+-- one input thinking
 
 
 
