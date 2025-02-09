@@ -60,7 +60,8 @@ library
     -- Other library packages from which modules are imported.
     build-depends:    
         base ^>=4.18.2.1,
-        gnuplot
+        gnuplot,
+        gloss
 
     -- Base language which the package is written in.
     default-language: Haskell2010
@@ -82,7 +83,8 @@ executable book01
     -- Other library packages from which modules are imported.
     build-depends:    
         base ^>=4.18.2.1,
-        gnuplot
+        gnuplot,
+        gloss
 
     -- Directories containing source files.
     hs-source-dirs:   app, src
