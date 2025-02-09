@@ -1,6 +1,5 @@
 module Main where
 import Data.List ()
-import Vectors -- Import the Utils module
 import Graphics.Gnuplot.Simple
 
 main :: IO ()
