@@ -149,6 +149,25 @@ velocityCA v0 a t = v0 + a*t
 positionCA :: Position -> Velocity -> Acceleration -> Time -> Position
 positionCA x0 v0 a t = x0 + v0*t + 0.5*a*t**2
 
+-- tuples
+yRock30 :: Floating a => a -> a
+yRock30 t = 30*t - 0.5*9.8*t**2
+
+-- Numerical Integration Redux
+
+oneStep :: R -> -- time step
+  (R -> R) -> -- function to integrate
+   (R, R) -> -- current value(t,y)
+    (R, R) -- updated value(t, y)
+oneStep dt f (t, y) = (t + dt, y + f t * dt)
+
+-- updated Integral definition
+integral' :: R -> DigitalIntegration
+integral' dt f a b = 
+  snd $ head $ dropWhile (\(t, _) -> t < b) $ 
+  iterate (oneStep dt f) (a, 0)
+
+
 main :: IO ()
 main =
   do
