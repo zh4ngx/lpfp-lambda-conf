@@ -55,7 +55,7 @@ library
     hs-source-dirs:   src
 
     -- Modules included in this library.
-    exposed-modules:  Vectors, DescribingMotion
+    exposed-modules:  Vectors, DescribingMotion, Plotting
 
     -- Other library packages from which modules are imported.
     build-depends:    
