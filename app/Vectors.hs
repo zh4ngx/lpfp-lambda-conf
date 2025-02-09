@@ -37,14 +37,28 @@ magnitudeV v = sqrt (v <.> v)
 
 
 -- make slides about vectors 
+type Time = R
+type Position = R
+type Acceleration = Vec
+type Velocity = Vec
+type Distance = R
+type TimeInterval = R
+--
+type PositionFunction = Time -> Distance
+type VelocityFunction = Time -> Velocity
+type AccelerationFunction = Time -> Acceleration
 
--- Vec derivative
-type VecDerivative = (R -> Vec) -> R -> Vec
 
 data Vec = Vec { xComp :: R  -- x component
                , yComp :: R  -- y component
                , zComp :: R  -- z component
                } deriving (Eq)
+
+type VecDerivative = (R -> Vec) -> R -> Vec
+
+vecDerivative :: R -> VecDerivative
+vecDerivative dt x t = 
+    (x (t + dt / 2) ^-^ x (t - dt / 2)) ^/ dt
 
 showDouble :: R -> String
 showDouble x
@@ -76,3 +90,11 @@ negateV (Vec x y z) = vec (-x) (-y) (-z)
 
 sumV :: [Vec] -> Vec
 sumV = foldr (^+^) zeroV
+
+vecIntegral :: R -- step size
+             -> (R -> Vec) -- function to integrate
+             -> R -- lower bound
+             -> R -- upper bound
+             -> Vec -- result
+vecIntegral dt f a b =
+    sumV [f t ^* dt | t <- [a + dt/2, a + 3*dt/2 .. b - dt/2]]             
