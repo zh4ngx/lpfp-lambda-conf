@@ -1,4 +1,22 @@
-module Vectors where
+{-# OPTIONS -Wall #-}
+module Vectors (
+        Vec(..),
+    (^+^),
+    (^-^),
+    (*^),
+    (^*),
+    (^/),
+    (<.>),
+    (><),
+    magnitudeV,
+    iHat,
+    jHat,
+    kHat,
+    sumV,
+    negateV,
+    vecIntegral,
+    vecDerivative,
+) where
 
 
 type R = Double
@@ -98,3 +116,4 @@ vecIntegral :: R -- step size
              -> Vec -- result
 vecIntegral dt f a b =
     sumV [f t ^* dt | t <- [a + dt/2, a + 3*dt/2 .. b - dt/2]]             
+
