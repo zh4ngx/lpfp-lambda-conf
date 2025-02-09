@@ -1,6 +1,4 @@
 module Main where
-import Data.List ()
-import Graphics.Gnuplot.Simple
 
 main :: IO ()
 main =
