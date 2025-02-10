@@ -55,7 +55,7 @@ library
     hs-source-dirs:   src
 
     -- Modules included in this library.
-    exposed-modules:  Vectors, DescribingMotion, Plotting
+    exposed-modules:  Vectors, DescribingMotion, Plotting, NewtonsIILaw
 
     -- Other library packages from which modules are imported.
     build-depends:    
@@ -74,11 +74,10 @@ executable book01
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:   
-    
+    other-modules:    NewtonsIILaw, Vectors, DescribingMotion, Plotting
 
     -- LANGUAGE extensions used by modules in this package.
-    exposed-modules:  Vectors, DescribingMotion, Plotting
+    -- other-extensions:
 
     -- Other library packages from which modules are imported.
     build-depends:    
@@ -91,4 +90,4 @@ executable book01
 
     -- Base language which the package is written in.
     default-language: Haskell2010
-   
+

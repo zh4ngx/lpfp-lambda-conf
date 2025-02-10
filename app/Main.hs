@@ -1,9 +1,9 @@
 module Main where
 
-
+import NewtonsIILaw(carGraph)
 
 main :: IO ()
 main =
   do
     putStrLn "Hello, Haskell!"
-    putStrLn "Hello, Haskell!"
+    carGraph
