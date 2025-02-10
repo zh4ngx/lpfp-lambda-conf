@@ -40,4 +40,6 @@ carGraph
     = plotFunc [Title "Car on an air track"
                ,XLabel "Time (s)"
                ,YLabel "Velocity of Car (m/s)"
+               ,PNG "car.png"
                ] [0..4 :: Time] (velocityCF 0.1 0.6 [0.04, -0.08])
+

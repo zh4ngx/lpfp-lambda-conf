@@ -1,7 +1,6 @@
 module Main where
 
 import NewtonsIILaw(carGraph)
-
 main :: IO ()
 main =
   do
