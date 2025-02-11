@@ -55,7 +55,11 @@ library
     hs-source-dirs:   src
 
     -- Modules included in this library.
-    exposed-modules:  Vectors, DescribingMotion, Plotting, NewtonsIILaw
+    exposed-modules:  Vectors, 
+      DescribingMotion, 
+      Plotting, 
+      NewtonsIILaw,
+      Mechanics1d
 
     -- Other library packages from which modules are imported.
     build-depends:    
@@ -74,8 +78,11 @@ executable book01
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    other-modules:    NewtonsIILaw, Vectors, DescribingMotion, Plotting
-
+    exposed-modules:  Vectors, 
+      DescribingMotion, 
+      Plotting, 
+      NewtonsIILaw,
+      Mechanics1d
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
