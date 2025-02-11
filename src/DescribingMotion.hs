@@ -16,6 +16,9 @@ type Acceleration = R
 type Velocity = R
 type Distance = R
 type TimeInterval = R
+type Force = R
+type Mass = R
+
 ---
 
 type PositionFunction = Time -> Distance
