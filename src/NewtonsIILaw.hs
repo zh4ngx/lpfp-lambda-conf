@@ -4,18 +4,18 @@ import Graphics.Gnuplot.Simple
 import DescribingMotion
 
 
-velocityCF :: Mass 
+velocityCF :: Mass
               -> Velocity -- velocity
               -> [Force]  -- forces
               -> VelocityFunction
-velocityCF m v0 fs = 
+velocityCF m v0 fs =
     let
      a = sum fs / m
     in \t -> v0 + a * t
 
-positionCF :: Mass 
+positionCF :: Mass
             -> Position -- position
-            -> Velocity 
+            -> Velocity
             -> [Force]  -- forces
             -> PositionFunction
 positionCF m x0 v0 fs =
@@ -37,20 +37,20 @@ carGraph
 -- | Newton's second law with force that changes with time
 -- for numerical integration
 velocityFt :: R -- dt for integral
-              ->  Mass 
+              ->  Mass
               -> Velocity -- velocity
               -> [Time -> Force]  -- forces
               -> VelocityFunction
-        
+
 velocityFt dt m v0 fs =
     let fNet t = sum [f t | f <- fs]
         a t = fNet t / m
     in antiderivative dt v0 a
 
 positionFt :: R -- dt for integral
-              -> Mass 
+              -> Mass
               -> Position -- position
-              -> Velocity 
+              -> Velocity
               -> [Time -> Force]  -- forces
               -> PositionFunction
 positionFt dt m x0 v0 fs =
@@ -74,3 +74,49 @@ childPedaling
             --   ,PNG "ChildPosition.png" -- update when creating a progrma
             --    ,Key Nothing -- update when craeting a program
                ] [0..40 :: R] (positionFt 0.1 20 0 0 [pedalCoast])
+
+
+
+fAir :: R  -- drag coefficient
+     -> R  -- air density
+     -> R  -- cross-sectional area of object
+     -> Velocity
+     -> Force
+fAir drag rho area v = - (drag * rho * area * abs v * v / 2)
+
+newtonSecondV :: Mass
+                -> [Velocity -> Force]
+                -> Velocity
+                -> R
+newtonSecondV m fs v0
+    = sum [f v0 | f <- fs] / m
+
+-- update Velocityt usnig the euler method
+
+updateVelocity :: R -- dt
+                  -> Mass
+                  -> [Velocity -> Force]
+                  -> Velocity
+                  -> Velocity
+updateVelocity dt m fs v0
+    = v0 + dt * newtonSecondV m fs v0
+
+velocityFv :: R -- dt
+              -> Mass
+              -> Velocity
+              -> [Velocity -> Force]
+              -> VelocityFunction
+velocityFv dt m v0 fs t =
+    let numSteps = abs $ round (t / dt)
+    in iterate (updateVelocity dt m fs) v0 !! numSteps
+
+bikeVelocity :: VelocityFunction
+bikeVelocity = velocityFv 1 70 0 [const 100, fAir 2 1.225 0.6]
+
+bikeGraph :: IO ()
+bikeGraph = plotFunc [Title "Bike velocity"
+                     ,XLabel "Time (s)"
+                     ,YLabel "Velocity of Bike (m/s)"
+                    --  ,PNG "BikeVelocity1.png"
+                    --  ,Key Nothing
+                     ] [0,0.5..60] bikeVelocity
