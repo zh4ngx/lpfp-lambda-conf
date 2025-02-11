@@ -120,3 +120,59 @@ bikeGraph = plotFunc [Title "Bike velocity"
                     --  ,PNG "BikeVelocity1.png"
                     --  ,Key Nothing
                      ] [0,0.5..60] bikeVelocity
+
+-- The state of a physical system
+
+
+-- second law with forces that depend on time and velocity
+newtonSecondTV :: Mass
+                -> [(Time, Velocity) -> Force]
+                -> (Time, Velocity)
+                -> (R, R)
+newtonSecondTV m fs (t, v)
+    = let fNet = sum [f (t, v) | f <- fs]
+          a = fNet / m
+      in (v, a)
+
+updateTV :: R -- dt
+            -> Mass
+            -> [(Time, Velocity) -> Force]
+            -> (Time, Velocity)
+            -> (Time, Velocity)
+updateTV dt m fs (t, v0) =
+    let (dtdt, dvdt) = newtonSecondTV m fs (t, v0)
+    in (t + dtdt*dt, v0 + dvdt * dt)
+
+statesTV :: R -- dt
+            -> Mass
+            -> (Time, Velocity) -- initial state
+            -> [(Time, Velocity) -> Force] -- list of forces
+            -> [(Time, Velocity)] -- infinite list of states
+
+statesTV dt m (t0, v0) fs
+    = iterate (updateTV dt m fs) (t0, v0)
+
+-- produce a velocity function
+velocityFtv :: R -- dt
+               -> Mass
+               -> (Time, Velocity) -- initial state
+               -> [(Time, Velocity) -> Force] -- list of forces
+               -> VelocityFunction
+velocityFtv dt m (t0, v0) fs t
+    = let numSteps = abs $ round (t / dt)
+      in snd $ statesTV dt m (t0, v0) fs !! numSteps
+    
+
+positionFtv :: R -- dt
+               -> Mass
+               -> Position -- initial position
+               -> Velocity -- initial velocity
+               -> [(Time, Velocity) -> Force] -- list of forces
+               -> PositionFunction
+-- test implementation
+positionFtv dt m x0 v0 fs =
+  let velocityFunc = velocityFtv dt m (0, v0) fs
+  in antiderivative dt x0 velocityFunc
+
+  
+
