@@ -59,7 +59,9 @@ library
       DescribingMotion, 
       Plotting, 
       NewtonsIILaw,
-      Mechanics1d
+      Mechanics1d,
+      Mechanics3d
+
 
     -- Other library packages from which modules are imported.
     build-depends:    
@@ -82,7 +84,8 @@ executable book01
       DescribingMotion, 
       Plotting, 
       NewtonsIILaw,
-      Mechanics1d
+      Mechanics1d,
+      Mechanics3d
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
