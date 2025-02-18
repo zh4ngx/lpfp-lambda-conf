@@ -54,7 +54,7 @@ statesTXV dt m txv0 fs = iterate (updateTXV dt m fs) txv0
 velocity1D :: [State1D]           -- infinite list
            -> Time -> Velocity    -- velocity function
 velocity1D sts t
-    = let (t0,_,_) = sts !! 0
+    = let (t0,_,_) = head sts
           (t1,_,_) = sts !! 1
           dt = t1 - t0
           numSteps = abs $ round (t / dt)
@@ -72,7 +72,7 @@ velocityFtxv dt m txv0 fs = velocity1D (statesTXV dt m txv0 fs)
 position1D :: [State1D]           -- infinite list
            -> Time -> Position    -- position function
 position1D sts t
-    = let (t0,_,_) = sts !! 0
+    = let (t0,_,_) = head sts
           (t1,_,_) = sts !! 1
           dt = t1 - t0
           numSteps = abs $ round (t / dt)
@@ -87,12 +87,12 @@ positionFtxv :: R                   -- time step
 positionFtxv dt m txv0 fs = position1D (statesTXV dt m txv0 fs)
 
 springForce :: R -> State1D -> Force
-springForce k (_,x0,_) = -k * x0
+springForce k (_,x0,_) = - (k * x0)
 
 dampedHOForces :: [State1D -> Force]
 dampedHOForces = [springForce 0.8
                  ,\(_,_,v0) -> fAir 2 1.225 (pi * 0.02**2) v0
-                 ,\_ -> -0.0027 * 9.80665
+                 ,\_ -> - (0.0027 * 9.80665)
                  ]
 
 dampedHOStates :: [State1D]
