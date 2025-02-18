@@ -8,7 +8,9 @@ module Vectors (
     (^/),
     (<.>),
     (><),
-    magnitudeV,
+    PosVec,
+    vec,
+    magnitude,
     iHat,
     jHat,
     kHat,
@@ -16,6 +18,7 @@ module Vectors (
     negateV,
     vecIntegral,
     vecDerivative,
+    zeroV
 ) where
 
 
@@ -50,13 +53,13 @@ infixl 7 ><
 (><) (Vec ax ay az) (Vec bx by bz) =
     Vec (ay * bz - az * by) (az * bx - ax * bz) (ax * by - ay * bx)
 
-magnitudeV :: Vec -> R
-magnitudeV v = sqrt (v <.> v)
+magnitude :: Vec -> R
+magnitude v = sqrt (v <.> v)
 
 
 -- make slides about vectors 
 type Time = R
-type Position = R
+type PosVec = Vec
 type Acceleration = Vec
 type Velocity = Vec
 type Distance = R
