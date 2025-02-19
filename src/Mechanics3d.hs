@@ -110,6 +110,7 @@ eulerCromerPS dt deriv st
             }
 
 instance RealVectorSpace DParticleState where
+    (+++) :: DParticleState -> DParticleState -> DParticleState
     dst1 +++ dst2
         = DParticleState { dmdt = dmdt dst1  +  dmdt dst2
                          , dqdt = dqdt dst1  +  dqdt dst2
@@ -117,6 +118,7 @@ instance RealVectorSpace DParticleState where
                          , drdt = drdt dst1 ^+^ drdt dst2
                          , dvdt = dvdt dst1 ^+^ dvdt dst2
                          }
+    scale :: R -> DParticleState -> DParticleState
     scale w dst
         = DParticleState { dmdt = w *  dmdt dst
                          , dqdt = w *  dqdt dst
@@ -126,6 +128,7 @@ instance RealVectorSpace DParticleState where
                          }
 
 instance Diff ParticleState DParticleState where
+    shift :: R -> DParticleState -> ParticleState -> ParticleState
     shift dt dps (ParticleState m q t r v)
         = ParticleState (m  +  dmdt dps  * dt)
                         (q  +  dqdt dps  * dt)
