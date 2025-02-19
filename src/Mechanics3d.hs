@@ -1,6 +1,9 @@
+{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses #-}
+{-# LANGUAGE InstanceSigs #-}
+
 module Mechanics3d where
 import DescribingMotion(R)
-
+import Mechanics1d(Diff(..), TimeStep, Time, scale, RealVectorSpace, NumericalMethod, (+++), solver)
 import Vectors
     ( Vec, PosVec, (^+^), (^-^), (*^), (^*), (^/), (<.>), (><)
     , vec, sumV, magnitude, zeroV, xComp, yComp, zComp, iHat, jHat, kHat)
@@ -25,6 +28,130 @@ rockState
                            , velocity = 3 *^ iHat ^+^ 4 *^ kHat  -- m/s
                            }
 
+-- definition of one body problem
 type OneBodyForce = ParticleState -> Vec
+
+
+data DParticleState = DParticleState { dmdt :: R
+                                     , dqdt :: R
+                                     , dtdt :: R
+                                     , drdt :: Vec
+                                     , dvdt :: Vec }
+                      deriving Show
+
+newtonSecondPS :: [OneBodyForce]
+               -> ParticleState -> DParticleState  -- a differential equation
+newtonSecondPS fs st
+    = let fNet = sumV [f st | f <- fs]
+          m = mass st
+          v = velocity st
+          acc = fNet ^/ m
+      in DParticleState { dmdt = 0    -- dm/dt
+                        , dqdt = 0    -- dq/dt
+                        , dtdt = 1    -- dt/dt
+                        , drdt = v    -- dr/dt
+                        , dvdt = acc  -- dv/dt
+                        }
+
+-- z direction is toward the sky
+
+-- 
+
+-- z direction is toward the sky
+-- assumes SI units
+earthSurfaceGravity :: OneBodyForce
+earthSurfaceGravity st
+    = let g = 9.80665  -- m/s^2
+      in (- (mass st * g)) *^ kHat
+
+-- origin is at center of sun
+-- assumes SI units
+sunGravity :: OneBodyForce
+sunGravity (ParticleState m _q _t r _v)
+    = let bigG = 6.67408e-11  -- N m^2/kg^2
+          sunMass = 1.98848e30  -- kg
+      in (- (bigG * sunMass * m)) *^ r ^/ magnitude r ** 3
+
+airResistance :: R  -- drag coefficient
+              -> R  -- air density
+              -> R  -- cross-sectional area of object
+              -> OneBodyForce
+airResistance drag rho area (ParticleState _m _q _t _r v)
+    = (- (0.5 * drag * rho * area * magnitude v)) *^ v
+
+windForce :: Vec  -- wind velocity
+          -> R    -- drag coefficient
+          -> R    -- air density
+          -> R    -- cross-sectional area of object
+          -> OneBodyForce
+windForce vWind drag rho area (ParticleState _m _q _t _r v)
+    = let vRel = v ^-^ vWind
+      in (- (0.5 * drag * rho * area * magnitude vRel)) *^ vRel
+
+uniformLorentzForce :: Vec  -- E
+                    -> Vec  -- B
+                    -> OneBodyForce
+uniformLorentzForce vE vB (ParticleState _m q _t _r v)
+    = q *^ (vE ^+^ v >< vB)
+
+
+eulerCromerPS :: TimeStep        -- dt for stepping
+              -> NumericalMethod ParticleState DParticleState
+eulerCromerPS dt deriv st
+    = let t   = time     st
+          r   = posVec   st
+          v   = velocity st
+          dst = deriv st
+          acc = dvdt dst
+          v'  = v ^+^ acc ^* dt
+      in st { time     = t  +         dt
+            , posVec   = r ^+^ v'  ^* dt
+            , velocity = v ^+^ acc ^* dt
+            }
+
+instance RealVectorSpace DParticleState where
+    dst1 +++ dst2
+        = DParticleState { dmdt = dmdt dst1  +  dmdt dst2
+                         , dqdt = dqdt dst1  +  dqdt dst2
+                         , dtdt = dtdt dst1  +  dtdt dst2
+                         , drdt = drdt dst1 ^+^ drdt dst2
+                         , dvdt = dvdt dst1 ^+^ dvdt dst2
+                         }
+    scale w dst
+        = DParticleState { dmdt = w *  dmdt dst
+                         , dqdt = w *  dqdt dst
+                         , dtdt = w *  dtdt dst
+                         , drdt = w *^ drdt dst
+                         , dvdt = w *^ dvdt dst
+                         }
+
+instance Diff ParticleState DParticleState where
+    shift dt dps (ParticleState m q t r v)
+        = ParticleState (m  +  dmdt dps  * dt)
+                        (q  +  dqdt dps  * dt)
+                        (t  +  dtdt dps  * dt)
+                        (r ^+^ drdt dps ^* dt)
+                        (v ^+^ dvdt dps ^* dt)
+
+statesPS :: NumericalMethod ParticleState DParticleState
+         -> [OneBodyForce]  -- list of force funcs
+         -> ParticleState -> [ParticleState]  --evolver
+statesPS method = iterate . method . newtonSecondPS
+
+updatePS :: NumericalMethod ParticleState DParticleState
+         -> [OneBodyForce]
+         -> ParticleState -> ParticleState
+updatePS method = method . newtonSecondPS
+
+positionPS :: NumericalMethod ParticleState DParticleState
+           -> [OneBodyForce]  -- list of force funcs
+           -> ParticleState   -- initial state
+           -> Time -> PosVec  -- position function
+positionPS method fs st t
+    = let states = statesPS method fs st
+          dt = time (states !! 1) - time (head states)
+          numSteps = abs $ round (t / dt)
+          st1 = solver method (newtonSecondPS fs) st !! numSteps
+      in posVec st1
 
 
