@@ -18,7 +18,8 @@ module Vectors (
     negateV,
     vecIntegral,
     vecDerivative,
-    zeroV
+    zeroV,
+    VelocityVecFunction
 ) where
 
 
@@ -65,9 +66,9 @@ type Velocity = Vec
 type Distance = R
 type TimeInterval = R
 --
-type PositionFunction = Time -> Distance
-type VelocityFunction = Time -> Velocity
-type AccelerationFunction = Time -> Acceleration
+type PositionVecFunction = Time -> Distance
+type VelocityVecFunction = Time -> Velocity
+type AccelerationVecFunction = Time -> Acceleration
 
 
 data Vec = Vec { xComp :: R  -- x component

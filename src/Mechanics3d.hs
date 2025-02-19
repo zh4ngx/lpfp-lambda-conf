@@ -6,7 +6,10 @@ import DescribingMotion(R)
 import Mechanics1d(Diff(..), TimeStep, Time, scale, RealVectorSpace, NumericalMethod, (+++), solver)
 import Vectors
     ( Vec, PosVec, (^+^), (^-^), (*^), (^*), (^/), (<.>), (><)
-    , vec, sumV, magnitude, zeroV, xComp, yComp, zComp, iHat, jHat, kHat)
+    , vec, sumV, magnitude, zeroV, xComp, yComp, zComp, iHat, jHat, kHat,
+    VelocityVecFunction )
+
+import Graphics.Gnuplot.Simple
 data ParticleState = ParticleState { mass     :: R
                                    , charge   :: R
                                    , time     :: R
@@ -149,12 +152,66 @@ updatePS method = method . newtonSecondPS
 positionPS :: NumericalMethod ParticleState DParticleState
            -> [OneBodyForce]  -- list of force funcs
            -> ParticleState   -- initial state
-           -> Time -> PosVec  -- position function
+           -> VelocityVecFunction  -- position function
 positionPS method fs st t
     = let states = statesPS method fs st
           dt = time (states !! 1) - time (head states)
           numSteps = abs $ round (t / dt)
           st1 = solver method (newtonSecondPS fs) st !! numSteps
       in posVec st1
+
+baseballForces :: [OneBodyForce]
+baseballForces
+    = let area = pi * (0.074 / 2) ** 2
+      in [earthSurfaceGravity
+         ,airResistance 0.3 1.225 area]
+
+baseballTrajectory :: R  -- time step
+                   -> R  -- initial speed
+                   -> R  -- launch angle in degrees
+                   -> [(R,R)]  -- (y,z) pairs
+baseballTrajectory dt v0 thetaDeg
+    = let thetaRad = thetaDeg * pi / 180
+          vy0 = v0 * cos thetaRad
+          vz0 = v0 * sin thetaRad
+          initialState
+              = ParticleState { mass     = 0.145
+                              , charge   = 0
+                              , time     = 0
+                              , posVec   = zeroV
+                              , velocity = vec 0 vy0 vz0 }
+      in trajectory $ zGE0 $
+         statesPS (eulerCromerPS dt) baseballForces initialState
+
+zGE0 :: [ParticleState] -> [ParticleState]
+zGE0 = takeWhile (\(ParticleState _ _ _ r _) -> zComp r >= 0)
+
+trajectory :: [ParticleState] -> [(R,R)]
+trajectory sts = [(yComp r,zComp r) | (ParticleState _ _ _ r _) <- sts]
+
+baseballRange :: R  -- time step
+              -> R  -- initial speed
+              -> R  -- launch angle in degrees
+              -> R  -- range
+baseballRange dt v0 thetaDeg
+    = let (y,_) = last $ baseballTrajectory dt v0 thetaDeg
+      in y
+
+baseballRangeGraph :: IO ()
+baseballRangeGraph
+    = plotFunc [Title "Range for baseball hit at 45 m/s"
+               ,XLabel "Angle above horizontal (degrees)"
+               ,YLabel "Horizontal range (m)"
+            --    ,PNG "baseballrange.png"
+            --    ,Key Nothing
+               ] [10,11..80] $ baseballRange 0.01 45
+
+
+bestAngle :: (R,R)
+bestAngle
+    = maximum [(baseballRange 0.01 45 thetaDeg,thetaDeg) |
+               thetaDeg <- [30,31..60]]
+
+
 
 
