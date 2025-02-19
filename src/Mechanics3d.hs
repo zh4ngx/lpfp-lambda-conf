@@ -3,7 +3,7 @@
 
 module Mechanics3d where
 import DescribingMotion(R)
-import Mechanics1d(Diff(..), TimeStep, Time, scale, RealVectorSpace, NumericalMethod, (+++), solver)
+import Mechanics1d(Diff(..), TimeStep, Time, scale, RealVectorSpace, NumericalMethod, (+++), solver, rungeKutta4)
 import Vectors
     ( Vec, PosVec, (^+^), (^-^), (*^), (^*), (^/), (<.>), (><)
     , vec, sumV, magnitude, zeroV, xComp, yComp, zComp, iHat, jHat, kHat,
@@ -213,5 +213,53 @@ bestAngle
                thetaDeg <- [30,31..60]]
 
 
+relativityPS :: [OneBodyForce]
+             -> ParticleState -> DParticleState  -- a differential equation
+relativityPS fs st
+    = let fNet = sumV [f st | f <- fs]
+          c = 299792458  -- m / s
+          m = mass st
+          v = velocity st
+          u = v ^/ c
+          acc = sqrt (1 - u <.> u) *^ (fNet ^-^ (fNet <.> u) *^ u) ^/ m
+      in DParticleState { dmdt = 0    -- dm/dt
+                        , dqdt = 0    -- dq/dt
+                        , dtdt = 1    -- dt/dt
+                        , drdt = v    -- dr/dt
+                        , dvdt = acc  -- dv/vt
+                        }
+
+constantForcePlot :: IO ()
+constantForcePlot
+    = let year = 365.25 * 24 * 60 * 60  -- seconds
+          c = 299792458                 -- m/s
+          method = rungeKutta4 1000
+          forces = [const (10 *^ iHat)]
+          initialState = defaultParticleState { mass = 1 }
+          newtonStates = solver method (newtonSecondPS forces) initialState
+          relativityStates = solver method (relativityPS forces) initialState
+          newtonTVs = [(time st / year, xComp (velocity st) / c)
+                           | st <- takeWhile tle1yr newtonStates]
+          relativityTVs = [(time st / year, xComp (velocity st) / c)
+                               | st <- takeWhile tle1yr relativityStates]
+      in plotPaths [Key Nothing
+                   ,Title "Response to a constant force"
+                   ,XLabel "Time (years)"
+                   ,YLabel "Velocity (multiples of c)"
+                --    ,PNG "constantForceComp.png"
+                   ,customLabel (0.1,1) "mass = 1 kg"
+                   ,customLabel (0.1,0.9) "force = 10 N"
+                   ,customLabel (0.5,0.7) "Newtonian"
+                   ,customLabel (0.8,0.6) "relativistic"
+                   ] [newtonTVs,relativityTVs]
+
+tle1yr :: ParticleState -> Bool
+tle1yr = (<= 365.25 * 24 * 60 * 60) . time
+
+
+customLabel :: (R,R) -> String -> Attribute
+customLabel (x,y) label
+     = Custom "label"
+       ["\"" ++ label ++ "\"" ++ " at " ++ show x ++ "," ++ show y]
 
 
