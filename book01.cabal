@@ -60,7 +60,8 @@ library
       Plotting, 
       NewtonsIILaw,
       Mechanics1d,
-      Mechanics3d
+      Mechanics3d,
+      LambdaConf
 
 
     -- Other library packages from which modules are imported.
