@@ -48,7 +48,8 @@ type Derivative = Function -> Function
 -- derivative :: R -> Derivative
 -- derivative dt x t = (x (t + dt / 2 ) - x (t - dt / 2)) / dt
 derivative :: R -> Derivative
-derivative dt x t = (x (t + dt / 2 ) - x (t - dt / 2)) / dt
+derivative dt x t = 
+  (x (t + dt / 2 ) - x (t - dt / 2)) / dt
 
 -- conclusion we have introduced the concep of derivate to haskell
 -- but also model the problem of kinetics 
@@ -87,6 +88,7 @@ velocityFromAcceleration = antiderivative
 
 antiderivative :: R -> Antiderivative
 antiderivative dt vo  a t = vo + integral dt a 0 t
+-- leave integral definition in undef first 
 
 type NumericalIntegration = 
     Function -> -- Function to integrate
@@ -94,7 +96,8 @@ type NumericalIntegration =
     R -> -- Upper bound
     R -- Result
 
-type Integral = R -> NumericalIntegration
+type Integral = R -> --dt
+ NumericalIntegration
 -- Integral using the midpoint rule
 integral :: R -> NumericalIntegration
 integral dt f a b = 
