@@ -68,11 +68,10 @@ accFromVelocity = derivative
 type Antiderivative = R -> -- we will need an initial state
                        Function -> Function
 
-antiderivative :: R -> Antiderivative
-antiderivative = undefined
 
 -- This allow us to move from right to left, from acceleration to velocity to position
 -- we have now a complete model of motion in one dimension with constant acceleration
+-- fundamental theorem of calculus
 
 positionFromVelocity :: R ->  -- dt
  R -> -- initial position
@@ -84,5 +83,21 @@ velocityFromAcceleration :: R ->  -- dt
   AccelerationFunction -> VelocityFunction
 velocityFromAcceleration = antiderivative
 
+-- lets expand on the concept of antiderivative using an integral
+
+antiderivative :: R -> Antiderivative
+antiderivative dt vo  a t = vo + integral dt a 0 t
+
+type NumericalIntegration = 
+    Function -> -- Function to integrate
+    R -> -- Lower bound
+    R -> -- Upper bound
+    R -- Result
+
+type Integral = R -> NumericalIntegration
+-- Integral using the midpoint rule
+integral :: R -> NumericalIntegration
+integral dt f a b = 
+    sum [f t * dt | t <- [a + dt / 2, a + 3 * dt / 2 .. b - dt / 2]]
 
 
