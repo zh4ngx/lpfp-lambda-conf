@@ -61,7 +61,8 @@ library
       NewtonsIILaw,
       Mechanics1d,
       Mechanics3d,
-      LambdaConf
+      LambdaConf,
+      LambdaConfVec
 
 
     -- Other library packages from which modules are imported.

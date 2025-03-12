@@ -32,8 +32,6 @@ type Acceleration = R
 type Velocity = R
 type Distance = R
 type TimeInterval = R
-type Force = R
-type Mass = R
 
 -- lets name base functions 
 type Function = R -> R
@@ -104,3 +102,5 @@ integral dt f a b =
     sum [f t * dt | t <- [a + dt / 2, a + 3 * dt / 2 .. b - dt / 2]]
 
 
+
+-- lets keep exploring kinetics but in 3d
