@@ -24,15 +24,31 @@ module Vectors (
 
 (^+^) :: Vec -> Vec -> Vec
 (^-^) :: Vec -> Vec -> Vec
-(*^) :: R -> Vec -> Vec
-(^*) :: Vec -> R -> Vec
-(^/) :: Vec -> R -> Vec
-(<.>) :: Vec -> Vec -> R
+(*^) :: RealNumber -> Vec -> Vec
+(^*) :: Vec -> RealNumber -> Vec
+(^/) :: Vec -> RealNumber -> Vec
+(<.>) :: Vec -> Vec -> RealNumber
 (><) :: Vec -> Vec -> Vec
-type R = Double
+type RealNumber = Double
+
+-- make slides about vectors 
+type Time = RealNumber
+type PosVec = Vec
+type Acceleration = Vec
+type Velocity = Vec
+--
+type PositionVecFunction = Time -> PosVec
+type VelocityVecFunction = Time -> Velocity
+type AccelerationVecFunction = Time -> Acceleration
+
+
+data Vec = Vec { xComp :: RealNumber  -- x component
+               , yComp :: RealNumber  -- y component
+               , zComp :: RealNumber  -- z component
+               } deriving (Eq)
+
 
 infixl 6 ^+^
-
 (^+^) (Vec ax ay az) (Vec bx by bz) =
     Vec (ax + bx) (ay + by) (az + bz)
 infixl 6 ^-^
@@ -54,35 +70,18 @@ infixl 7 ><
 (><) (Vec ax ay az) (Vec bx by bz) =
     Vec (ay * bz - az * by) (az * bx - ax * bz) (ax * by - ay * bx)
 
-magnitude :: Vec -> R
+magnitude :: Vec -> RealNumber
 magnitude v = sqrt (v <.> v)
 
 
--- make slides about vectors 
-type Time = R
-type PosVec = Vec
-type Acceleration = Vec
-type Velocity = Vec
-type Distance = R
-type TimeInterval = R
---
-type PositionVecFunction = Time -> Distance
-type VelocityVecFunction = Time -> Velocity
-type AccelerationVecFunction = Time -> Acceleration
 
+type VecDerivative = (RealNumber -> Vec) -> RealNumber -> Vec
 
-data Vec = Vec { xComp :: R  -- x component
-               , yComp :: R  -- y component
-               , zComp :: R  -- z component
-               } deriving (Eq)
-
-type VecDerivative = (R -> Vec) -> R -> Vec
-
-vecDerivative :: R -> VecDerivative
+vecDerivative :: RealNumber -> VecDerivative
 vecDerivative dt x t = 
     (x (t + dt / 2) ^-^ x (t - dt / 2)) ^/ dt
 
-showDouble :: R -> String
+showDouble :: RealNumber -> String
 showDouble x
     | x < 0      = "(" ++ show x ++ ")"
     | otherwise  = show x
@@ -92,7 +91,7 @@ instance Show Vec where
                               ++ showDouble y ++ " "
                               ++ showDouble z
 
-vec :: R -> R -> R -> Vec
+vec :: RealNumber -> RealNumber -> RealNumber -> Vec
 vec = Vec
 
 iHat :: Vec
@@ -113,10 +112,10 @@ negateV (Vec x y z) = vec (-x) (-y) (-z)
 sumV :: [Vec] -> Vec
 sumV = foldr (^+^) zeroV
 
-vecIntegral :: R -- step size
-             -> (R -> Vec) -- function to integrate
-             -> R -- lower bound
-             -> R -- upper bound
+vecIntegral :: RealNumber -- step size
+             -> (RealNumber -> Vec) -- function to integrate
+             -> RealNumber -- lower bound
+             -> RealNumber -- upper bound
              -> Vec -- result
 vecIntegral dt f a b =
     sumV [f t ^* dt | t <- [a + dt/2, a + 3*dt/2 .. b - dt/2]]             

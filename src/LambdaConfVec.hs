@@ -1,6 +1,5 @@
 module LambdaConfVec where
 -- lets revisit the basic definitions 
-test = "test"
 -- lets make some basic definitions 
 type R = Double
 type Time = R

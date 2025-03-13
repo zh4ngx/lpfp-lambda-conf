@@ -25,16 +25,16 @@ import qualified DescribingMotion as Force
 -- lets explore motion in term of position, velocity and acceleration
 --- in one dimension and with constant acceleration
 -- lets make some basic definitions 
-type R = Double
-type Time = R
-type Position = R
-type Acceleration = R
-type Velocity = R
-type Distance = R
-type TimeInterval = R
+type RealNumber   = Double
+type Function     = RealNumber -> RealNumber
+type Time         = RealNumber
+type Position     = RealNumber
+type Acceleration = RealNumber
+type Velocity     = RealNumber
+type Distance     = RealNumber
+type TimeInterval = RealNumber
 
 -- lets name base functions 
-type Function = R -> R
 type PositionFunction = Time -> Distance
 type VelocityFunction = Time -> Velocity
 type AccelerationFunction = Time -> Acceleration
@@ -43,9 +43,7 @@ type AccelerationFunction = Time -> Acceleration
 -- Derivatives
 type Derivative = Function -> Function
 
--- derivative :: R -> Derivative
--- derivative dt x t = (x (t + dt / 2 ) - x (t - dt / 2)) / dt
-derivative :: R -> Derivative
+derivative :: RealNumber -> Derivative
 derivative dt x t = 
   (x (t + dt / 2 ) - x (t - dt / 2)) / dt
 
@@ -54,17 +52,17 @@ derivative dt x t =
 
 -- derivative is now a tool to get to solution through functions
 
-velFromPosition :: R -> PositionFunction -> VelocityFunction
+velFromPosition :: RealNumber -> PositionFunction -> VelocityFunction
 velFromPosition = derivative
 
-accFromVelocity :: R -> VelocityFunction -> AccelerationFunction
+accFromVelocity :: RealNumber -> VelocityFunction -> AccelerationFunction
 accFromVelocity = derivative
 
 -- we see now a motion from left to right, from position to velocity to acceleration
 -- lets find the inverse function so we can return from acceleration to velocity to position
 -- lets define the inverse function of derivative
 -- lets call it antiderivative, whichs is o surprise a higher order function
-type Antiderivative = R -> -- we will need an initial state
+type Antiderivative = RealNumber -> -- we will need an initial state
                        Function -> Function
 
 
@@ -72,32 +70,32 @@ type Antiderivative = R -> -- we will need an initial state
 -- we have now a complete model of motion in one dimension with constant acceleration
 -- fundamental theorem of calculus
 
-positionFromVelocity :: R ->  -- dt
- R -> -- initial position
+positionFromVelocity :: RealNumber ->  -- dt
+ RealNumber -> -- initial position
   VelocityFunction -> PositionFunction
 positionFromVelocity = antiderivative
 
-velocityFromAcceleration :: R ->  -- dt
+velocityFromAcceleration :: RealNumber ->  -- dt
   Velocity -> -- initial velocity
   AccelerationFunction -> VelocityFunction
 velocityFromAcceleration = antiderivative
 
 -- lets expand on the concept of antiderivative using an integral
 
-antiderivative :: R -> Antiderivative
+antiderivative :: RealNumber -> Antiderivative
 antiderivative dt vo  a t = vo + integral dt a 0 t
 -- leave integral definition in undef first 
 
 type NumericalIntegration = 
     Function -> -- Function to integrate
-    R -> -- Lower bound
-    R -> -- Upper bound
-    R -- Result
+    RealNumber -> -- Lower bound
+    RealNumber -> -- Upper bound
+    RealNumber -- RealNumberesult
 
-type Integral = R -> --dt
+type Integral = RealNumber -> --dt
  NumericalIntegration
 -- Integral using the midpoint rule
-integral :: R -> NumericalIntegration
+integral :: RealNumber -> NumericalIntegration
 integral dt f a b = 
     sum [f t * dt | t <- [a + dt / 2, a + 3 * dt / 2 .. b - dt / 2]]
 
