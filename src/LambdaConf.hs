@@ -35,10 +35,28 @@ type Distance     = RealNumber
 type TimeInterval = RealNumber
 
 -- lets name base functions 
+-- this also define where we will be jumping from and to
 type PositionFunction = Time -> Distance
 type VelocityFunction = Time -> Velocity
 type AccelerationFunction = Time -> Acceleration
 -- 
+
+-- most of our 1d Kinetics problems will answering questions like?
+-- By looking at the speedometer, how can you tell the distance traveled?
+-- from a position function, how can we get the velocity function?
+velocityFromPosition :: RealNumber -> PositionFunction -> VelocityFunction
+-- from a acceleration function, how can we get the velocity function?
+accelerationFromVelocity :: RealNumber -> VelocityFunction -> AccelerationFunction
+-- from a position function, how can we get the Velocity function?
+positionFromVelocity :: RealNumber ->  -- dt
+ RealNumber -> -- initial position
+  VelocityFunction -> PositionFunction
+velocityFromAcceleration :: RealNumber ->  -- dt
+  Velocity -> -- initial velocity
+  AccelerationFunction -> VelocityFunction
+-- from only looking at the speedometer of a car, how can you tell the distanced traveled? 
+-- from only looking at the speedometer of a car, how can you tell the acceleration?
+
 
 -- Derivatives
 type Derivative = Function -> Function
@@ -52,11 +70,10 @@ derivative dt x t =
 
 -- derivative is now a tool to get to solution through functions
 
-velFromPosition :: RealNumber -> PositionFunction -> VelocityFunction
-velFromPosition = derivative
 
-accFromVelocity :: RealNumber -> VelocityFunction -> AccelerationFunction
-accFromVelocity = derivative
+velocityFromPosition = derivative
+
+accelerationFromVelocity = derivative
 
 -- we see now a motion from left to right, from position to velocity to acceleration
 -- lets find the inverse function so we can return from acceleration to velocity to position
@@ -70,14 +87,10 @@ type Antiderivative = RealNumber -> -- we will need an initial state
 -- we have now a complete model of motion in one dimension with constant acceleration
 -- fundamental theorem of calculus
 
-positionFromVelocity :: RealNumber ->  -- dt
- RealNumber -> -- initial position
-  VelocityFunction -> PositionFunction
+
 positionFromVelocity = antiderivative
 
-velocityFromAcceleration :: RealNumber ->  -- dt
-  Velocity -> -- initial velocity
-  AccelerationFunction -> VelocityFunction
+
 velocityFromAcceleration = antiderivative
 
 -- lets expand on the concept of antiderivative using an integral
