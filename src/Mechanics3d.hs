@@ -5,7 +5,7 @@ module Mechanics3d where
 import DescribingMotion(R)
 import Mechanics1d(Diff(..), TimeStep, Time, scale, RealVectorSpace, NumericalMethod, (+++), solver, rungeKutta4)
 import Vectors
-    ( Vec, PosVec, (^+^), (^-^), (*^), (^*), (^/), (<.>), (><)
+    ( Vector, PosVec, (^+^), (^-^), (*^), (^*), (^/), (<.>), (><)
     , vec, sumV, magnitude, zeroV, xComp, yComp, zComp, iHat, jHat, kHat,
     VelocityVecFunction )
 
@@ -13,8 +13,8 @@ import Graphics.Gnuplot.Simple
 data ParticleState = ParticleState { mass     :: R
                                    , charge   :: R
                                    , time     :: R
-                                   , posVec   :: Vec
-                                   , velocity :: Vec }
+                                   , posVec   :: Vector
+                                   , velocity :: Vector }
                      deriving Show
 
 
@@ -32,14 +32,14 @@ rockState
                            }
 
 -- definition of one body problem
-type OneBodyForce = ParticleState -> Vec
+type OneBodyForce = ParticleState -> Vector
 
 
 data DParticleState = DParticleState { dmdt :: R
                                      , dqdt :: R
                                      , dtdt :: R
-                                     , drdt :: Vec
-                                     , dvdt :: Vec }
+                                     , drdt :: Vector
+                                     , dvdt :: Vector }
                       deriving Show
 
 newtonSecondPS :: [OneBodyForce]
@@ -82,7 +82,7 @@ airResistance :: R  -- drag coefficient
 airResistance drag rho area (ParticleState _m _q _t _r v)
     = (- (0.5 * drag * rho * area * magnitude v)) *^ v
 
-windForce :: Vec  -- wind velocity
+windForce :: Vector  -- wind velocity
           -> R    -- drag coefficient
           -> R    -- air density
           -> R    -- cross-sectional area of object
@@ -91,8 +91,8 @@ windForce vWind drag rho area (ParticleState _m _q _t _r v)
     = let vRel = v ^-^ vWind
       in (- (0.5 * drag * rho * area * magnitude vRel)) *^ vRel
 
-uniformLorentzForce :: Vec  -- E
-                    -> Vec  -- B
+uniformLorentzForce :: Vector  -- E
+                    -> Vector  -- B
                     -> OneBodyForce
 uniformLorentzForce vE vB (ParticleState _m q _t _r v)
     = q *^ (vE ^+^ v >< vB)
