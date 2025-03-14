@@ -1,5 +1,6 @@
 {-# OPTIONS -Wall #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 module Vectors (
         Vec(..),
     (^+^),
@@ -22,14 +23,10 @@ module Vectors (
     zeroV,
     VelocityVecFunction
 ) where
--- data Vec = Vec { xComp :: RealNumber  -- x component
---                , yComp :: RealNumber  -- y component
---                , zComp :: RealNumber  -- z component
---                } deriving (Eq)
 data Vec = Vec RealNumber  -- x component
-                RealNumber  -- y component
-                RealNumber  -- z component
-                deriving (Eq)
+               RealNumber  -- y component
+               RealNumber  -- z component
+               deriving (Eq)
 
 type Time = RealNumber
 (^-^) :: Vec -> Vec -> Vec
@@ -63,16 +60,16 @@ accelerationVecFromVelocity :: RealNumber -> -- dt
   VelocityVecFunction -> AccelerationVecFunction
 accelerationVecFromVelocity =
     vecDerivative
--- from a position function, how can we get the Velocity function? // its a scalar but we will handle it as a vec
+-- -- from a position function, how can we get the Velocity function? // its a scalar but we will handle it as a vec
 positionVecFromVelocity :: RealNumber ->  -- dt
   VelocityVecFunction -> PositionVecFunction 
 positionVecFromVelocity = 
-    vecAntiderivative
+    undefined
 velocityVecFromAcceleration :: RealNumber ->  -- dt
   VelocityVecFunction -> -- initial velocity
   AccelerationVecFunction -> VelocityVecFunction
 velocityVecFromAcceleration =
-    vecAntiderivative
+   undefined 
 
 infixl 6 ^+^
 (^+^) (Vec ax ay az) (Vec bx by bz) =
@@ -143,7 +140,8 @@ type VecAntiderivative = RealNumber -> -- we will need an initial state
                        VecFunction -> VecFunction
 
 vecAntiderivative :: RealNumber -> VecAntiderivative
-vecAntiderivative dt vo  a t = vo + integral dt a 0 t
+-- vecAntiderivative dt vo  a t = vo + integral dt a 0 t
+vecAntiderivative = undefined
 -- leave integral definition in undef first 
 
 vecIntegral :: RealNumber -- step size
