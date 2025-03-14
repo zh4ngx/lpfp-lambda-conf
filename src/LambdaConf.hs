@@ -42,11 +42,16 @@ type AccelerationFunction = Time -> Acceleration
 -- 
 
 -- most of our 1d Kinetics problems will answering questions like?
+-- imagine you are travelling in a car, every second you query the speed take note
+-- and create a function that describes the speed of the car
+-- from the speed function, how can you tell the acceleration?, distanced traveled? etc
 -- By looking at the speedometer, how can you tell the distance traveled?
 -- from a position function, how can we get the velocity function?
-velocityFromPosition :: RealNumber -> PositionFunction -> VelocityFunction
+velocityFromPosition :: RealNumber -> -- dt
+   PositionFunction -> VelocityFunction
 -- from a acceleration function, how can we get the velocity function?
-accelerationFromVelocity :: RealNumber -> VelocityFunction -> AccelerationFunction
+accelerationFromVelocity :: RealNumber -> -- dt
+  VelocityFunction -> AccelerationFunction
 -- from a position function, how can we get the Velocity function?
 positionFromVelocity :: RealNumber ->  -- dt
  RealNumber -> -- initial position
@@ -57,6 +62,10 @@ velocityFromAcceleration :: RealNumber ->  -- dt
 -- from only looking at the speedometer of a car, how can you tell the distanced traveled? 
 -- from only looking at the speedometer of a car, how can you tell the acceleration?
 
+
+-- questions: Why is the area under the curve of the speed function equal to the distance traveled?
+
+-- 
 
 -- Derivatives
 type Derivative = Function -> Function
