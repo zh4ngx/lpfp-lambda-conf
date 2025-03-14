@@ -25,18 +25,18 @@ import qualified DescribingMotion as Force
 -- lets explore motion in term of position, velocity and acceleration
 --- in one dimension and with constant acceleration
 -- lets make some basic definitions 
-type RealNumber   = Double
+type RealNumber   = 
+  Double
 type Function     = RealNumber -> RealNumber
 type Time         = RealNumber
 type Position     = RealNumber
 type Acceleration = RealNumber
 type Velocity     = RealNumber
-type Distance     = RealNumber
 type TimeInterval = RealNumber
 
 -- lets name base functions 
 -- this also define where we will be jumping from and to
-type PositionFunction = Time -> Distance
+type PositionFunction = Time -> Position
 type VelocityFunction = Time -> Velocity
 type AccelerationFunction = Time -> Acceleration
 -- 
@@ -59,6 +59,7 @@ positionFromVelocity :: RealNumber ->  -- dt
 velocityFromAcceleration :: RealNumber ->  -- dt
   Velocity -> -- initial velocity
   AccelerationFunction -> VelocityFunction
+
 -- from only looking at the speedometer of a car, how can you tell the distanced traveled? 
 -- from only looking at the speedometer of a car, how can you tell the acceleration?
 

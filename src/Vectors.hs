@@ -52,7 +52,6 @@ type AccelerationVecFunction = Time -> Acceleration
 
 velocityVecFromPosition :: RealNumber -> -- dt
    PositionVecFunction -> VelocityVecFunction
-
 velocityVecFromPosition =
     vecDerivative
 -- from a acceleration function, how can we get the velocity function?
