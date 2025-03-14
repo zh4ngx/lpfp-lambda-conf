@@ -1,4 +1,5 @@
 {-# OPTIONS -Wall #-}
+{-# LANGUAGE InstanceSigs #-}
 module Vectors (
         Vec(..),
     (^+^),
@@ -21,32 +22,57 @@ module Vectors (
     zeroV,
     VelocityVecFunction
 ) where
+-- data Vec = Vec { xComp :: RealNumber  -- x component
+--                , yComp :: RealNumber  -- y component
+--                , zComp :: RealNumber  -- z component
+--                } deriving (Eq)
+data Vec = Vec RealNumber  -- x component
+                RealNumber  -- y component
+                RealNumber  -- z component
+                deriving (Eq)
 
-(^+^) :: Vec -> Vec -> Vec
+type Time = RealNumber
 (^-^) :: Vec -> Vec -> Vec
 (*^) :: RealNumber -> Vec -> Vec
 (^*) :: Vec -> RealNumber -> Vec
 (^/) :: Vec -> RealNumber -> Vec
 (<.>) :: Vec -> Vec -> RealNumber
 (><) :: Vec -> Vec -> Vec
+(^+^) :: Vec -> Vec -> Vec
 type RealNumber = Double
 
 -- make slides about vectors 
-type Time = RealNumber
+
 type PosVec = Vec
 type Acceleration = Vec
 type Velocity = Vec
 --
+type VecFunction = RealNumber -> Vec 
 type PositionVecFunction = Time -> PosVec
 type VelocityVecFunction = Time -> Velocity
 type AccelerationVecFunction = Time -> Acceleration
 
 
-data Vec = Vec { xComp :: RealNumber  -- x component
-               , yComp :: RealNumber  -- y component
-               , zComp :: RealNumber  -- z component
-               } deriving (Eq)
+velocityVecFromPosition :: RealNumber -> -- dt
+   PositionVecFunction -> VelocityVecFunction
 
+velocityVecFromPosition =
+    vecDerivative
+-- from a acceleration function, how can we get the velocity function?
+accelerationVecFromVelocity :: RealNumber -> -- dt
+  VelocityVecFunction -> AccelerationVecFunction
+accelerationVecFromVelocity =
+    vecDerivative
+-- from a position function, how can we get the Velocity function? // its a scalar but we will handle it as a vec
+positionVecFromVelocity :: RealNumber ->  -- dt
+  VelocityVecFunction -> PositionVecFunction 
+positionVecFromVelocity = 
+    vecAntiderivative
+velocityVecFromAcceleration :: RealNumber ->  -- dt
+  VelocityVecFunction -> -- initial velocity
+  AccelerationVecFunction -> VelocityVecFunction
+velocityVecFromAcceleration =
+    vecAntiderivative
 
 infixl 6 ^+^
 (^+^) (Vec ax ay az) (Vec bx by bz) =
@@ -75,7 +101,7 @@ magnitude v = sqrt (v <.> v)
 
 
 
-type VecDerivative = (RealNumber -> Vec) -> RealNumber -> Vec
+type VecDerivative = VecFunction -> VecFunction
 
 vecDerivative :: RealNumber -> VecDerivative
 vecDerivative dt x t = 
@@ -87,6 +113,7 @@ showDouble x
     | otherwise  = show x
 
 instance Show Vec where
+    show :: Vec -> String
     show (Vec x y z) = "vec " ++ showDouble x ++ " "
                               ++ showDouble y ++ " "
                               ++ showDouble z
@@ -111,6 +138,13 @@ negateV (Vec x y z) = vec (-x) (-y) (-z)
 
 sumV :: [Vec] -> Vec
 sumV = foldr (^+^) zeroV
+
+type VecAntiderivative = RealNumber -> -- we will need an initial state
+                       VecFunction -> VecFunction
+
+vecAntiderivative :: RealNumber -> VecAntiderivative
+vecAntiderivative dt vo  a t = vo + integral dt a 0 t
+-- leave integral definition in undef first 
 
 vecIntegral :: RealNumber -- step size
              -> (RealNumber -> Vec) -- function to integrate
