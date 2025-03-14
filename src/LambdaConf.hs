@@ -60,6 +60,12 @@ velocityFromAcceleration :: RealNumber ->  -- dt
   Velocity -> -- initial velocity
   AccelerationFunction -> VelocityFunction
 
+
+accelerationFromPosition :: RealNumber -> -- dt
+  PositionFunction -> AccelerationFunction
+accelerationFromPosition dt posFunc =
+  accelerationFromVelocity dt (velocityFromPosition dt posFunc)
+
 -- from only looking at the speedometer of a car, how can you tell the distanced traveled? 
 -- from only looking at the speedometer of a car, how can you tell the acceleration?
 

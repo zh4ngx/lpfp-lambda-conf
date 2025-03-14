@@ -23,10 +23,10 @@ module Vectors (
     zeroV,
     VelocityVecFunction
 ) where
-data Vec = Vec RealNumber  -- x component
-               RealNumber  -- y component
-               RealNumber  -- z component
-               deriving (Eq)
+data Vec = Vec { xComp :: RealNumber,  -- x component
+               yComp :: RealNumber,  -- y component
+               zComp :: RealNumber  -- z component
+} deriving (Eq)
 
 type Time = RealNumber
 (^-^) :: Vec -> Vec -> Vec
