@@ -16,11 +16,11 @@ module Vectors (
     iHat,
     jHat,
     kHat,
-    sumV,
+    sumV1,
     negateV,
     vectorIntegral,
     vectorDerivative,
-    zeroV,
+    zeroV1,
     VelocityVecFunction
 ) where
 data Vector = Vector { xComp :: RealNumber,  -- x component
@@ -125,14 +125,14 @@ jHat = vec 0 1 0
 kHat :: Vector
 kHat = vec 0 0 1
 
-zeroV :: Vector
-zeroV = vec 0 0 0
+zeroV1 :: Vector
+zeroV1 = vec 0 0 0
 
 negateV :: Vector -> Vector
 negateV (Vector x y z) = vec (-x) (-y) (-z)
 
-sumV :: [Vector] -> Vector
-sumV = foldr (^+^) zeroV
+sumV1 :: [Vector] -> Vector
+sumV1 = foldr (^+^) zeroV1
 
 type VecAntiderivative = RealNumber -> -- we will need an initial state
                        VecFunction -> VecFunction
