@@ -18,8 +18,8 @@ module Vectors (
     kHat,
     sumV,
     negateV,
-    vecIntegral,
-    vecDerivative,
+    vectorIntegral,
+    vectorDerivative,
     zeroV,
     VelocityVecFunction
 ) where
@@ -53,12 +53,12 @@ type AccelerationVecFunction = Time -> Acceleration
 velocityVecFromPosition :: RealNumber -> -- dt
    PositionVecFunction -> VelocityVecFunction
 velocityVecFromPosition =
-    vecDerivative
+    vectorDerivative
 -- from a acceleration function, how can we get the velocity function?
 accelerationVecFromVelocity :: RealNumber -> -- dt
   VelocityVecFunction -> AccelerationVecFunction
 accelerationVecFromVelocity =
-    vecDerivative
+    vectorDerivative
 -- -- from a position function, how can we get the Velocity function? // its a scalar but we will handle it as a vec
 positionVecFromVelocity :: RealNumber ->  -- dt
   VelocityVecFunction -> PositionVecFunction 
@@ -99,9 +99,8 @@ magnitude v = sqrt (v <.> v)
 
 type VecDerivative = VecFunction -> VecFunction
 
-vecDerivative :: RealNumber -> VecDerivative
-vecDerivative dt x t = 
-    (x (t + dt / 2) ^-^ x (t - dt / 2)) ^/ dt
+vectorDerivative :: RealNumber -> VecDerivative
+
 
 showDouble :: RealNumber -> String
 showDouble x
@@ -143,11 +142,18 @@ vecAntiderivative :: RealNumber -> VecAntiderivative
 vecAntiderivative = undefined
 -- leave integral definition in undef first 
 
-vecIntegral :: RealNumber -- step size
+vectorIntegral :: RealNumber -- step size
              -> (RealNumber -> Vector) -- function to integrate
              -> RealNumber -- lower bound
              -> RealNumber -- upper bound
              -> Vector -- result
-vecIntegral dt f a b =
-    sumV [f t ^* dt | t <- [a + dt/2, a + 3*dt/2 .. b - dt/2]]             
+         
 
+vectorDerivative dt x t = 
+    (x (t + dt / 2) ^-^ x (t - dt / 2)) ^/ dt
+
+vectorIntegral dt f a b =
+    let 
+        zeroV = vec 0 0 0
+        sumV = foldr (^+^) zeroV
+    in sumV [f t ^* dt | t <- [a + dt/3, a + 3*dt/2 .. b - dt/2]]    

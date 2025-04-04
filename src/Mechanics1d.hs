@@ -15,6 +15,7 @@ type Position = R
 type Velocity = R
 type Force    = R
 
+
 type State1D = (Time,Position,Velocity)
 
 newtonSecond1D :: Mass
@@ -39,7 +40,8 @@ euler1D dt deriv (t0,x0,v0)
 updateTXV :: R                   -- time interval dt
           -> Mass
           -> [State1D -> Force]  -- list of force funcs
-          -> State1D -> State1D  -- state-update function
+          -> State1D 
+            -> State1D  -- state-update function
 updateTXV dt m fs = euler1D dt (newtonSecond1D m fs)
 
 

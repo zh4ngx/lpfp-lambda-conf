@@ -17,7 +17,7 @@ type Velocity = R
 type Distance = R
 type TimeInterval = R
 type Force = R
-type Mass = R
+type Mass  = R
 
 ---
 

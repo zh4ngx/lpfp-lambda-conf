@@ -47,18 +47,11 @@ type AccelerationFunction = Time -> Acceleration
 -- from the speed function, how can you tell the acceleration?, distanced traveled? etc
 -- By looking at the speedometer, how can you tell the distance traveled?
 -- from a position function, how can we get the velocity function?
-velocityFromPosition :: RealNumber -> -- dt
-   PositionFunction -> VelocityFunction
+
 -- from a acceleration function, how can we get the velocity function?
-accelerationFromVelocity :: RealNumber -> -- dt
-  VelocityFunction -> AccelerationFunction
+
 -- from a position function, how can we get the Velocity function?
-positionFromVelocity :: RealNumber ->  -- dt
- RealNumber -> -- initial position
-  VelocityFunction -> PositionFunction
-velocityFromAcceleration :: RealNumber ->  -- dt
-  Velocity -> -- initial velocity
-  AccelerationFunction -> VelocityFunction
+
 
 
 accelerationFromPosition :: RealNumber -> -- dt
@@ -78,18 +71,31 @@ accelerationFromPosition dt posFunc =
 type Derivative = Function -> Function
 
 derivative :: RealNumber -> Derivative
-derivative dt x t = 
-  (x (t + dt / 2 ) - x (t - dt / 2)) / dt
 
 -- conclusion we have introduced the concep of derivate to haskell
 -- but also model the problem of kinetics 
 
 -- derivative is now a tool to get to solution through functions
 
-
+velocityFromPosition :: RealNumber -> -- dt
+   PositionFunction -> VelocityFunction
 velocityFromPosition = derivative
 
+accelerationFromVelocity :: RealNumber -> -- dt
+  VelocityFunction -> AccelerationFunction
 accelerationFromVelocity = derivative
+
+positionFromVelocity :: RealNumber ->  -- dt
+ RealNumber -> -- initial position
+  VelocityFunction -> PositionFunction
+
+positionFromVelocity = antiderivative
+
+velocityFromAcceleration :: RealNumber ->  -- dt
+  Velocity -> -- initial velocity
+  AccelerationFunction -> VelocityFunction
+velocityFromAcceleration = antiderivative
+
 
 -- we see now a motion from left to right, from position to velocity to acceleration
 -- lets find the inverse function so we can return from acceleration to velocity to position
@@ -104,10 +110,7 @@ type Antiderivative = RealNumber -> -- we will need an initial state
 -- fundamental theorem of calculus
 
 
-positionFromVelocity = antiderivative
 
-
-velocityFromAcceleration = antiderivative
 
 -- lets expand on the concept of antiderivative using an integral
 
@@ -125,9 +128,37 @@ type Integral = RealNumber -> --dt
  NumericalIntegration
 -- Integral using the midpoint rule
 integral :: RealNumber -> NumericalIntegration
+
+
+derivative dt x t = 
+  (x (t + dt / 2 ) - x (t - dt / 2)) / dt
+
 integral dt f a b = 
     sum [f t * dt | t <- [a + dt / 2, a + 3 * dt / 2 .. b - dt / 2]]
 
 
 
 -- lets keep exploring kinetics but in 3d
+type Mass = RealNumber
+type Force = RealNumber
+
+
+newtonSecondLaw :: Mass
+              -> [Velocity -> Force]  -- list of force functions
+              -> Velocity             -- current velocity
+              -> RealNumber           -- derivative of velocity
+newtonSecondLaw m fs v0 = sum [f v0 | f <- fs] / m
+
+updateVelocity :: RealNumber           -- time interval dt
+               -> Mass
+               -> [Velocity -> Force]  -- list of force functions
+               -> Velocity             -- current velocity
+               -> Velocity             -- new velocity
+updateVelocity dt m fs v0
+    = v0 + newtonSecondLaw m fs v0 * dt
+  
+type ForceFunctionCF _' = _' -> Force 
+type ForceFunctionTimeDep = Time -> Force 
+type ForceFunctionVelocityDep = Velocity -> Force 
+
+
