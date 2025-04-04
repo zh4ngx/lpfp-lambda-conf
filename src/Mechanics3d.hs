@@ -6,7 +6,7 @@ import DescribingMotion(R)
 import Mechanics1d(Diff(..), TimeStep, Time, scale, RealVectorSpace, NumericalMethod, (+++), solver, rungeKutta4)
 import Vectors
     ( Vector, PosVec, (^+^), (^-^), (*^), (^*), (^/), (<.>), (><)
-    , vec, sumV, magnitude, zeroV, xComp, yComp, zComp, iHat, jHat, kHat,
+    , vec, sumV1, magnitude, zeroV1, xComp, yComp, zComp, iHat, jHat, kHat,
     VelocityVecFunction )
 
 import Graphics.Gnuplot.Simple
@@ -22,8 +22,8 @@ defaultParticleState :: ParticleState
 defaultParticleState = ParticleState { mass     = 1
                                      , charge   = 0
                                      , time     = 0
-                                     , posVec   = zeroV
-                                     , velocity = zeroV }
+                                     , posVec   = zeroV1
+                                     , velocity = zeroV1 }
 
 rockState :: ParticleState
 rockState
@@ -45,7 +45,7 @@ data DParticleState = DParticleState { dmdt :: R
 newtonSecondPS :: [OneBodyForce]
                -> ParticleState -> DParticleState  -- a differential equation
 newtonSecondPS fs st
-    = let fNet = sumV [f st | f <- fs]
+    = let fNet = sumV1 [f st | f <- fs]
           m = mass st
           v = velocity st
           acc = fNet ^/ m
@@ -178,7 +178,7 @@ baseballTrajectory dt v0 thetaDeg
               = ParticleState { mass     = 0.145
                               , charge   = 0
                               , time     = 0
-                              , posVec   = zeroV
+                              , posVec   = zeroV1
                               , velocity = vec 0 vy0 vz0 }
       in trajectory $ zGE0 $
          statesPS (eulerCromerPS dt) baseballForces initialState
@@ -216,7 +216,7 @@ bestAngle
 relativityPS :: [OneBodyForce]
              -> ParticleState -> DParticleState  -- a differential equation
 relativityPS fs st
-    = let fNet = sumV [f st | f <- fs]
+    = let fNet = sumV1 [f st | f <- fs]
           c = 299792458  -- m / s
           m = mass st
           v = velocity st
