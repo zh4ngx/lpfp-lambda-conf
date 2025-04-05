@@ -51,13 +51,16 @@ export SOURCE_DATE_EPOCH=$(date +%s)
     cabal test
     ```
 
+7. **Plotting**:
+    To plot
+
+    ```sh
+    cabal repl
+    import Plotting
+    ```
+
 ## Repository Structure
 
 - `src/`: Contains the source code for the project.
 - `tests/`: Contains the test cases for the project.
 - `docs/`: Contains documentation and resources related to the project.
-
-For more detailed information, refer to the documentation in the `docs/` directory.
-
-
-https://www.mathcha.io/editor
