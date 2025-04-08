@@ -25,14 +25,14 @@ import qualified DescribingMotion as Force
 -- lets explore motion in term of position, velocity and acceleration
 --- in one dimension and with constant acceleration
 -- lets make some basic definitions 
-type RealNumber   = 
-  Double
+type RealNumber   = Double
 type Function     = RealNumber -> RealNumber
 type Time         = RealNumber
 type Position     = RealNumber
 type Acceleration = RealNumber
 type Velocity     = RealNumber
-type TimeInterval = RealNumber
+
+type DT = RealNumber --dt
 
 -- lets name base functions 
 -- this also define where we will be jumping from and to
@@ -54,7 +54,7 @@ type AccelerationFunction = Time -> Acceleration
 
 
 
-accelerationFromPosition :: RealNumber -> -- dt
+accelerationFromPosition :: DT -> -- dt
   PositionFunction -> AccelerationFunction
 accelerationFromPosition dt posFunc =
   accelerationFromVelocity dt (velocityFromPosition dt posFunc)
@@ -77,21 +77,25 @@ derivative :: RealNumber -> Derivative
 
 -- derivative is now a tool to get to solution through functions
 
-velocityFromPosition :: RealNumber -> -- dt
+velocityFromPosition :: Time -> -- dt
    PositionFunction -> VelocityFunction
+
+
+accelerationFromVelocity :: Time -> -- dt
+  VelocityFunction -> AccelerationFunction
+
+   
 velocityFromPosition = derivative
 
-accelerationFromVelocity :: RealNumber -> -- dt
-  VelocityFunction -> AccelerationFunction
 accelerationFromVelocity = derivative
 
-positionFromVelocity :: RealNumber ->  -- dt
+positionFromVelocity :: Time ->  -- dt
  RealNumber -> -- initial position
   VelocityFunction -> PositionFunction
 
 positionFromVelocity = antiderivative
 
-velocityFromAcceleration :: RealNumber ->  -- dt
+velocityFromAcceleration :: Time ->  -- dt
   Velocity -> -- initial velocity
   AccelerationFunction -> VelocityFunction
 velocityFromAcceleration = antiderivative
@@ -118,23 +122,29 @@ antiderivative :: RealNumber -> Antiderivative
 antiderivative dt vo  a t = vo + integral dt a 0 t
 -- leave integral definition in undef first 
 
-type NumericalIntegration = 
-    Function -> -- Function to integrate
-    RealNumber -> -- Lower bound
-    RealNumber -> -- Upper bound
-    RealNumber -- RealNumberesult
-
-type Integral = RealNumber -> --dt
- NumericalIntegration
--- Integral using the midpoint rule
-integral :: RealNumber -> NumericalIntegration
-
-
 derivative dt x t = 
   (x (t + dt / 2 ) - x (t - dt / 2)) / dt
 
+type NumericalIntegration = 
+    Function -> -- Function to integrate
+    Time -> -- Lower bound
+    Time -> -- Upper bound
+    RealNumber -- RealNumberesult
+
+type Integral = Time -> --dt
+ NumericalIntegration
+-- Integral using the midpoint rule
+integral :: Time -> --dt
+  NumericalIntegration
+
+
+
+
 integral dt f a b = 
-    sum [f t * dt | t <- [a + dt / 2, a + 3 * dt / 2 .. b - dt / 2]]
+    sum [
+      f t * dt | -- rectangle height = f(t) * dt
+      t <- [a + dt / 2, a + 3 * dt / 2 .. b - dt / 2] -- stream of time at midpoint
+      ]
 
 
 
@@ -149,7 +159,7 @@ newtonSecondLaw :: Mass
               -> RealNumber           -- derivative of velocity
 newtonSecondLaw m fs v0 = sum [f v0 | f <- fs] / m
 
-updateVelocity :: RealNumber           -- time interval dt
+updateVelocity :: Time           -- time interval dt
                -> Mass
                -> [Velocity -> Force]  -- list of force functions
                -> Velocity             -- current velocity

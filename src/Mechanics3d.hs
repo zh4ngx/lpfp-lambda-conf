@@ -2,7 +2,7 @@
 {-# LANGUAGE InstanceSigs #-}
 
 module Mechanics3d where
-import DescribingMotion(R)
+import DescribingMotion(RealNumber, R)
 import Mechanics1d(Diff(..), TimeStep, Time, scale, RealVectorSpace, NumericalMethod, (+++), solver, rungeKutta4)
 import Vectors
     ( Vector, PosVec, (^+^), (^-^), (*^), (^*), (^/), (<.>), (><)
@@ -10,9 +10,10 @@ import Vectors
     VelocityVecFunction )
 
 import Graphics.Gnuplot.Simple
-data ParticleState = ParticleState { mass     :: R
-                                   , charge   :: R
-                                   , time     :: R
+
+
+data ParticleState = ParticleState { mass     :: RealNumber
+                                   , time     :: RealNumber
                                    , posVec   :: Vector
                                    , velocity :: Vector }
                      deriving Show
@@ -20,7 +21,6 @@ data ParticleState = ParticleState { mass     :: R
 
 defaultParticleState :: ParticleState
 defaultParticleState = ParticleState { mass     = 1
-                                     , charge   = 0
                                      , time     = 0
                                      , posVec   = zeroV1
                                      , velocity = zeroV1 }
@@ -70,7 +70,7 @@ earthSurfaceGravity st
 -- origin is at center of sun
 -- assumes SI units
 sunGravity :: OneBodyForce
-sunGravity (ParticleState m _q _t r _v)
+sunGravity (ParticleState m _t r _v)
     = let bigG = 6.67408e-11  -- N m^2/kg^2
           sunMass = 1.98848e30  -- kg
       in (- (bigG * sunMass * m)) *^ r ^/ magnitude r ** 3
@@ -79,7 +79,7 @@ airResistance :: R  -- drag coefficient
               -> R  -- air density
               -> R  -- cross-sectional area of object
               -> OneBodyForce
-airResistance drag rho area (ParticleState _m _q _t _r v)
+airResistance drag rho area (ParticleState _m _t _r v)
     = (- (0.5 * drag * rho * area * magnitude v)) *^ v
 
 windForce :: Vector  -- wind velocity
@@ -87,15 +87,15 @@ windForce :: Vector  -- wind velocity
           -> R    -- air density
           -> R    -- cross-sectional area of object
           -> OneBodyForce
-windForce vWind drag rho area (ParticleState _m _q _t _r v)
+windForce vWind drag rho area (ParticleState _m _t _r v)
     = let vRel = v ^-^ vWind
       in (- (0.5 * drag * rho * area * magnitude vRel)) *^ vRel
 
-uniformLorentzForce :: Vector  -- E
-                    -> Vector  -- B
-                    -> OneBodyForce
-uniformLorentzForce vE vB (ParticleState _m q _t _r v)
-    = q *^ (vE ^+^ v >< vB)
+-- uniformLorentzForce :: Vector  -- E
+--                     -> Vector  -- B
+--                     -> OneBodyForce
+-- uniformLorentzForce vE vB (ParticleState _m _t _r v)
+--     = q *^ (vE ^+^ v >< vB)
 
 
 eulerCromerPS :: TimeStep        -- dt for stepping
@@ -132,9 +132,8 @@ instance RealVectorSpace DParticleState where
 
 instance Diff ParticleState DParticleState where
     shift :: R -> DParticleState -> ParticleState -> ParticleState
-    shift dt dps (ParticleState m q t r v)
+    shift dt dps (ParticleState m t r v)
         = ParticleState (m  +  dmdt dps  * dt)
-                        (q  +  dqdt dps  * dt)
                         (t  +  dtdt dps  * dt)
                         (r ^+^ drdt dps ^* dt)
                         (v ^+^ dvdt dps ^* dt)
@@ -176,7 +175,6 @@ baseballTrajectory dt v0 thetaDeg
           vz0 = v0 * sin thetaRad
           initialState
               = ParticleState { mass     = 0.145
-                              , charge   = 0
                               , time     = 0
                               , posVec   = zeroV1
                               , velocity = vec 0 vy0 vz0 }
@@ -184,10 +182,10 @@ baseballTrajectory dt v0 thetaDeg
          statesPS (eulerCromerPS dt) baseballForces initialState
 
 zGE0 :: [ParticleState] -> [ParticleState]
-zGE0 = takeWhile (\(ParticleState _ _ _ r _) -> zComp r >= 0)
+zGE0 = takeWhile (\(ParticleState _ _ r _) -> zComp r >= 0)
 
 trajectory :: [ParticleState] -> [(R,R)]
-trajectory sts = [(yComp r,zComp r) | (ParticleState _ _ _ r _) <- sts]
+trajectory sts = [(yComp r,zComp r) | (ParticleState _ _ r _) <- sts]
 
 baseballRange :: R  -- time step
               -> R  -- initial speed
