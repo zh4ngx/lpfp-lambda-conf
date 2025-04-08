@@ -36,7 +36,6 @@ type OneBodyForce = ParticleState -> Vector
 
 
 data DParticleState = DParticleState { dmdt :: R
-                                     , dqdt :: R
                                      , dtdt :: R
                                      , drdt :: Vector
                                      , dvdt :: Vector }
@@ -50,7 +49,6 @@ newtonSecondPS fs st
           v = velocity st
           acc = fNet ^/ m
       in DParticleState { dmdt = 0    -- dm/dt
-                        , dqdt = 0    -- dq/dt
                         , dtdt = 1    -- dt/dt
                         , drdt = v    -- dr/dt
                         , dvdt = acc  -- dv/dt
@@ -116,7 +114,6 @@ instance RealVectorSpace DParticleState where
     (+++) :: DParticleState -> DParticleState -> DParticleState
     dst1 +++ dst2
         = DParticleState { dmdt = dmdt dst1  +  dmdt dst2
-                         , dqdt = dqdt dst1  +  dqdt dst2
                          , dtdt = dtdt dst1  +  dtdt dst2
                          , drdt = drdt dst1 ^+^ drdt dst2
                          , dvdt = dvdt dst1 ^+^ dvdt dst2
@@ -124,7 +121,6 @@ instance RealVectorSpace DParticleState where
     scale :: R -> DParticleState -> DParticleState
     scale w dst
         = DParticleState { dmdt = w *  dmdt dst
-                         , dqdt = w *  dqdt dst
                          , dtdt = w *  dtdt dst
                          , drdt = w *^ drdt dst
                          , dvdt = w *^ dvdt dst
@@ -221,7 +217,6 @@ relativityPS fs st
           u = v ^/ c
           acc = sqrt (1 - u <.> u) *^ (fNet ^-^ (fNet <.> u) *^ u) ^/ m
       in DParticleState { dmdt = 0    -- dm/dt
-                        , dqdt = 0    -- dq/dt
                         , dtdt = 1    -- dt/dt
                         , drdt = v    -- dr/dt
                         , dvdt = acc  -- dv/vt
