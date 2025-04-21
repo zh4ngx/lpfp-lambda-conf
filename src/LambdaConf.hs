@@ -1,6 +1,7 @@
 -- https://docs.google.com/presentation/d/1s5Qmfa1CvMfg0TyvWZTh8MHMXE91JWM5UDlePDsphg8/edit#slide=id.p
 module LambdaConf where
 import qualified DescribingMotion as Force
+import Prelude hiding (Integral)
 
 -- we want to explore the beaty of Newton's second law, through the lens of s a
 -- software engineer using a functional language to express and explore the problem
@@ -98,7 +99,7 @@ accelerationFromVelocity :: Time -> -- dt
 accelerationFromVelocity = derivative
 
 positionFromVelocity :: Time ->  -- dt
- RealNumber -> -- initial position
+ Position -> -- initial position
   VelocityFunction -> PositionFunction
 
 positionFromVelocity = antiderivative
@@ -128,7 +129,8 @@ type Antiderivative =
 
 antiderivative :: RealNumber -> Antiderivative
 
-antiderivative dx fo a x = fo + integral dx a 0 x
+antiderivative dx fo a x = 
+  fo + integral dx a 0 x
 
 
 
@@ -138,18 +140,13 @@ type NumericalIntegration =
     Time -> -- Upper bound
     RealNumber -- RealNumberesult
 
-type Integral = Time -> --dt
- NumericalIntegration
--- Integral using the midpoint rule
 integral :: Time -> --dt
-  NumericalIntegration
-
-
+ NumericalIntegration
 
 
 integral dt f a b = 
     sum [
-      f t * dt | -- rectangle height = f(t) * dt
+      f t * dt | -- rectangle area = f(t) * dt
       t <- [a + dt / 2, a + 3 * dt / 2 .. b - dt / 2] -- stream of time at midpoint
       ]
 
@@ -163,14 +160,18 @@ type Force = RealNumber
 newtonSecondLaw :: Mass
               -> [Velocity -> Force]  -- list of force functions
               -> Velocity             -- current velocity
-              -> RealNumber           -- derivative of velocity
-newtonSecondLaw m fs v0 = sum [f v0 | f <- fs] / m
+              -> Velocity           -- derivative of velocity
+
+newtonSecondLaw m fs v0 = 
+
+  sum [f v0 | f <- fs] / m
 
 updateVelocity :: Time           -- time interval dt
                -> Mass
                -> [Velocity -> Force]  -- list of force functions
                -> Velocity             -- current velocity
                -> Velocity             -- new velocity
+               
 updateVelocity dt m fs v0
     = v0 + newtonSecondLaw m fs v0 * dt
   

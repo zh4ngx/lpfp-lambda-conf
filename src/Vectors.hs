@@ -23,11 +23,13 @@ module Vectors (
     zeroV1,
     VelocityVecFunction
 ) where
-data Vector = Vector { xComp :: RealNumber,  -- x component
-               yComp :: RealNumber,  -- y component
-               zComp :: RealNumber  -- z component
+data Vector = Vector { 
+    xComp :: RealNumber,  -- x component
+    yComp :: RealNumber,  -- y component
+    zComp :: RealNumber  -- z component
 } deriving (Eq)
 
+type RealNumber = Double
 type Time = RealNumber
 (^-^) :: Vector -> Vector -> Vector
 (*^) :: RealNumber -> Vector -> Vector
@@ -36,7 +38,6 @@ type Time = RealNumber
 (<.>) :: Vector -> Vector -> RealNumber
 (><) :: Vector -> Vector -> Vector
 (^+^) :: Vector -> Vector -> Vector
-type RealNumber = Double
 
 -- make slides about vectors 
 
@@ -134,12 +135,15 @@ negateV (Vector x y z) = vec (-x) (-y) (-z)
 sumV1 :: [Vector] -> Vector
 sumV1 = foldr (^+^) zeroV1
 
-type VecAntiderivative = RealNumber -> -- we will need an initial state
+type VecAntiderivative = Vector -> -- we will need an initial state
                        VecFunction -> VecFunction
 
-vecAntiderivative :: RealNumber -> VecAntiderivative
--- vecAntiderivative dt vo  a t = vo + integral dt a 0 t
-vecAntiderivative = undefined
+vecAntiderivative :: RealNumber -> 
+    Vector -> -- initial state
+    VecFunction -> -- function to integrate
+    VecFunction -- result
+vecAntiderivative dx fo a x =
+    fo ^+^ vectorIntegral dx a 0 x
 -- leave integral definition in undef first 
 
 vectorIntegral :: RealNumber -- step size
