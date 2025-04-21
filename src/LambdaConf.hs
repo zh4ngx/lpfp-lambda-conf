@@ -185,12 +185,13 @@ type ForceFunctionCF _' = _' -> Force
 type ForceFunctionTimeDep = Time -> Force 
 type ForceFunctionVelocityDep = Velocity -> Force 
 
-data ParticleState = ParticleState { mass     :: RealNumber
-                                   , charge   :: RealNumber
-                                   , time     :: RealNumber
-                                   , position   :: Vector
-                                   , velocity :: Vector }
-                     deriving Show
+data ParticleState = 
+  ParticleState { 
+    mass     :: RealNumber, 
+    charge   :: RealNumber, 
+    time     :: RealNumber, 
+    position :: Vector, 
+    velocity :: Vector }
 
 type OneBodyForce = 
   ParticleState -> Vector

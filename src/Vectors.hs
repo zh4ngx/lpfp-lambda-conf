@@ -21,7 +21,8 @@ module Vectors (
     vectorIntegral,
     vectorDerivative,
     zeroV1,
-    VelocityVecFunction
+    VelocityVecFunction,
+    PositionVecFunction
 ) where
 data Vector = Vector { 
     xComp :: RealNumber,  -- x component

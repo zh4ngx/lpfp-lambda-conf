@@ -7,7 +7,7 @@ import Mechanics1d(Diff(..), TimeStep, Time, scale, RealVectorSpace, NumericalMe
 import Vectors
     ( Vector, PosVec, (^+^), (^-^), (*^), (^*), (^/), (<.>), (><)
     , vec, sumV1, magnitude, zeroV1, xComp, yComp, zComp, iHat, jHat, kHat,
-    VelocityVecFunction )
+    VelocityVecFunction, PositionVecFunction )
 
 import Graphics.Gnuplot.Simple
 
@@ -142,13 +142,16 @@ statesPS method = iterate . method . newtonSecondPS
 
 updatePS :: NumericalMethod ParticleState DParticleState
          -> [OneBodyForce]
-         -> ParticleState -> ParticleState
+         -> ParticleState -> 
+            ParticleState
 updatePS method = method . newtonSecondPS
 
-positionPS :: NumericalMethod ParticleState DParticleState
-           -> [OneBodyForce]  -- list of force funcs
-           -> ParticleState   -- initial state
-           -> VelocityVecFunction  -- position function
+positionPS :: 
+  NumericalMethod ParticleState DParticleState -> 
+  [OneBodyForce] -> -- list of force funcs
+  ParticleState  -> -- initial state
+  PositionVecFunction  -- position function
+
 positionPS method fs st t
     = let states = statesPS method fs st
           dt = time (states !! 1) - time (head states)
