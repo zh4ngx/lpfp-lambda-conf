@@ -67,10 +67,14 @@ accelerationFromPosition dt posFunc =
 
 -- 
 
--- Derivatives
+-- Derivative
+
 type Derivative = Function -> Function
 
 derivative :: RealNumber -> Derivative
+
+derivative dt x t = 
+  (x (t + dt / 2 ) - x (t - dt / 2)) / dt
 
 -- conclusion we have introduced the concep of derivate to haskell
 -- but also model the problem of kinetics 
@@ -105,9 +109,6 @@ velocityFromAcceleration = antiderivative
 -- lets find the inverse function so we can return from acceleration to velocity to position
 -- lets define the inverse function of derivative
 -- lets call it antiderivative, whichs is o surprise a higher order function
-type Antiderivative = RealNumber -> -- we will need an initial state
-                       Function -> Function
-
 
 -- This allow us to move from right to left, from acceleration to velocity to position
 -- we have now a complete model of motion in one dimension with constant acceleration
@@ -116,14 +117,15 @@ type Antiderivative = RealNumber -> -- we will need an initial state
 
 
 
--- lets expand on the concept of antiderivative using an integral
+type Antiderivative = 
+  RealNumber -> -- initial value
+  Function -> Function
 
 antiderivative :: RealNumber -> Antiderivative
-antiderivative dt vo  a t = vo + integral dt a 0 t
--- leave integral definition in undef first 
 
-derivative dt x t = 
-  (x (t + dt / 2 ) - x (t - dt / 2)) / dt
+antiderivative dx fo a x = fo + integral dx a 0 x
+
+
 
 type NumericalIntegration = 
     Function -> -- Function to integrate

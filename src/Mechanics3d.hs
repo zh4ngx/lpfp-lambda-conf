@@ -43,6 +43,7 @@ data DParticleState = DParticleState { dmdt :: R
 
 newtonSecondPS :: [OneBodyForce]
                -> ParticleState -> DParticleState  -- a differential equation
+               
 newtonSecondPS fs st
     = let fNet = sumV1 [f st | f <- fs]
           m = mass st
@@ -239,7 +240,7 @@ constantForcePlot
                    ,Title "Response to a constant force"
                    ,XLabel "Time (years)"
                    ,YLabel "Velocity (multiples of c)"
-                --    ,PNG "constantForceComp.png"
+                   ,PNG "constantForceComp.png"
                    ,customLabel (0.1,1) "mass = 1 kg"
                    ,customLabel (0.1,0.9) "force = 10 N"
                    ,customLabel (0.5,0.7) "Newtonian"
