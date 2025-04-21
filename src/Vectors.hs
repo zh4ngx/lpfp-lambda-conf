@@ -117,12 +117,18 @@ instance Show Vector where
 vec :: RealNumber -> RealNumber -> RealNumber -> Vector
 vec = Vector
 
+-- x component
 iHat :: Vector
 iHat = vec 1 0 0
 
+zeroX :: Vector
+zeroX = vec 0 0 0
+
+-- y component
 jHat :: Vector
 jHat = vec 0 1 0
 
+-- z component
 kHat :: Vector
 kHat = vec 0 0 1
 
@@ -135,16 +141,13 @@ negateV (Vector x y z) = vec (-x) (-y) (-z)
 sumV1 :: [Vector] -> Vector
 sumV1 = foldr (^+^) zeroV1
 
-type VecAntiderivative = Vector -> -- we will need an initial state
-                       VecFunction -> VecFunction
+type VecAntiderivative = Vector -> -- initial state
+    VecFunction -> VecFunction -- higher order function
 
-vecAntiderivative :: RealNumber -> 
-    Vector -> -- initial state
-    VecFunction -> -- function to integrate
-    VecFunction -- result
-vecAntiderivative dx fo a x =
-    fo ^+^ vectorIntegral dx a 0 x
--- leave integral definition in undef first 
+vecAntiderivative :: RealNumber -> -- dt
+  VecAntiderivative -- HoF
+
+
 
 vectorIntegral :: RealNumber -- step size
              -> (RealNumber -> Vector) -- function to integrate
@@ -155,6 +158,10 @@ vectorIntegral :: RealNumber -- step size
 
 vectorDerivative dt x t = 
     (x (t + dt / 2) ^-^ x (t - dt / 2)) ^/ dt
+
+vecAntiderivative dx fo a x =
+    fo ^+^ vectorIntegral dx a 0 x
+
 
 vectorIntegral dt f a b =
     let 

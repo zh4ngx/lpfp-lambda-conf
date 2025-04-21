@@ -2,6 +2,9 @@
 module LambdaConf where
 import qualified DescribingMotion as Force
 import Prelude hiding (Integral)
+import Vectors
+import Mechanics3d (rockState)
+import qualified Control.Applicative as Vector
 
 -- we want to explore the beaty of Newton's second law, through the lens of s a
 -- software engineer using a functional language to express and explore the problem
@@ -83,6 +86,11 @@ derivative :: Time -> Derivative
 derivative dt x t = 
   (x (t + dt / 2 ) - x (t - dt / 2)) / dt
 
+antiderivative dx fo a x = 
+  fo + integral dx a 0 x
+
+
+
 -- conclusion we have introduced the concep of derivate to haskell
 -- but also model the problem of kinetics 
 
@@ -129,8 +137,6 @@ type Antiderivative =
 
 antiderivative :: RealNumber -> Antiderivative
 
-antiderivative dx fo a x = 
-  fo + integral dx a 0 x
 
 
 
@@ -179,4 +185,24 @@ type ForceFunctionCF _' = _' -> Force
 type ForceFunctionTimeDep = Time -> Force 
 type ForceFunctionVelocityDep = Velocity -> Force 
 
+data ParticleState = ParticleState { mass     :: RealNumber
+                                   , charge   :: RealNumber
+                                   , time     :: RealNumber
+                                   , position   :: Vector
+                                   , velocity :: Vector }
+                     deriving Show
 
+type OneBodyForce = 
+  ParticleState -> Vector
+
+val :: const -> Vector
+val = const (10 *^ iHat)
+
+rocketState :: ParticleState
+rocketState
+    = ParticleState { mass     = 2         -- kg
+                    , charge   = 0         -- C
+                    , time     = 0         -- s
+                    , position = 0 *^ iHat -- m
+                    , velocity = 0 *^ iHat -- m/s
+                    }
