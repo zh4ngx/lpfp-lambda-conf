@@ -16,7 +16,7 @@ type Velocity = R
 type Force    = R
 
 
-type State1D = (Time,Position,Velocity)
+type State1D = (Time, Position, Velocity)
 
 newtonSecond1D :: Mass
                -> [State1D -> Force]  -- force funcs

@@ -25,8 +25,10 @@ import qualified DescribingMotion as Force
 -- lets explore motion in term of position, velocity and acceleration
 --- in one dimension and with constant acceleration
 -- lets make some basic definitions 
+
+
+
 type RealNumber   = Double
-type Function     = RealNumber -> RealNumber
 type Time         = RealNumber
 type Position     = RealNumber
 type Acceleration = RealNumber
@@ -34,11 +36,15 @@ type Velocity     = RealNumber
 
 type DT = RealNumber --dt
 
--- lets name base functions 
--- this also define where we will be jumping from and to
+type Function     = RealNumber -> RealNumber
+
 type PositionFunction = Time -> Position
+
 type VelocityFunction = Time -> Velocity
+
 type AccelerationFunction = Time -> Acceleration
+
+
 -- 
 
 -- most of our 1d Kinetics problems will answering questions like?
@@ -71,7 +77,7 @@ accelerationFromPosition dt posFunc =
 
 type Derivative = Function -> Function
 
-derivative :: RealNumber -> Derivative
+derivative :: Time -> Derivative
 
 derivative dt x t = 
   (x (t + dt / 2 ) - x (t - dt / 2)) / dt
@@ -84,12 +90,10 @@ derivative dt x t =
 velocityFromPosition :: Time -> -- dt
    PositionFunction -> VelocityFunction
 
+velocityFromPosition = derivative
 
 accelerationFromVelocity :: Time -> -- dt
   VelocityFunction -> AccelerationFunction
-
-   
-velocityFromPosition = derivative
 
 accelerationFromVelocity = derivative
 
@@ -102,6 +106,7 @@ positionFromVelocity = antiderivative
 velocityFromAcceleration :: Time ->  -- dt
   Velocity -> -- initial velocity
   AccelerationFunction -> VelocityFunction
+
 velocityFromAcceleration = antiderivative
 
 
