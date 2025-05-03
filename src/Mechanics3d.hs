@@ -41,8 +41,7 @@ data DParticleState = DParticleState { dmdt :: R
                                      , dvdt :: Vector }
                       deriving Show
 
-newtonSecondPS :: [OneBodyForce]
-               -> ParticleState -> DParticleState  -- a differential equation
+
                
 newtonSecondPS fs st
     = let fNet = sumV1 [f st | f <- fs]
@@ -211,8 +210,13 @@ bestAngle
                thetaDeg <- [30,31..60]]
 
 
+newtonSecondPS :: [OneBodyForce]
+    -> ParticleState -> DParticleState  
+
 relativityPS :: [OneBodyForce]
-             -> ParticleState -> DParticleState  -- a differential equation
+    -> ParticleState -> DParticleState  
+
+
 relativityPS fs st
     = let fNet = sumV1 [f st | f <- fs]
           c = 299792458  -- m / s

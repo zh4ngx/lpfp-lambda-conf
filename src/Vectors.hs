@@ -33,12 +33,12 @@ data Vector = Vector {
 type RealNumber = Double
 type Time = RealNumber
 (^-^) :: Vector -> Vector -> Vector
+(^+^) :: Vector -> Vector -> Vector
 (*^)  :: RealNumber -> Vector -> Vector
 (^*)  :: Vector -> RealNumber -> Vector
 (^/)  :: Vector -> RealNumber -> Vector
 (<.>) :: Vector -> Vector -> RealNumber
 (><)  :: Vector -> Vector -> Vector
-(^+^) :: Vector -> Vector -> Vector
 
 -- make slides about vectors 
 
