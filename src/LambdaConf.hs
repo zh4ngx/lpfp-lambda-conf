@@ -166,7 +166,7 @@ type Force = RealNumber
 newtonSecondLaw :: Mass
               -> [Velocity -> Force]  -- list of force functions
               -> Velocity             -- current velocity
-              -> Velocity           -- derivative of velocity
+              -> Velocity           -- next velocity
 
 newtonSecondLaw m fs v0 = 
 
