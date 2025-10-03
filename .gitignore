@@ -52,3 +52,6 @@
 
 # VSCode
 .vscode/
+
+# direnv
+.direnv
