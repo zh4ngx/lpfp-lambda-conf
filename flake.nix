@@ -26,6 +26,7 @@
             pkgs.haskellPackages.cabal-install
             # pkgs.haskellPackages.ghcup
             pkgs.haskellPackages.gnuplot
+            pkgs.haskellPackages.haskell-language-server
             pkgs.gnuplot
             pkgs.libGL
             pkgs.libGLU
