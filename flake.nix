@@ -6,8 +6,14 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs {
           inherit system;
@@ -21,6 +27,9 @@
             # pkgs.haskellPackages.ghcup
             pkgs.haskellPackages.gnuplot
             pkgs.gnuplot
+            pkgs.libGL
+            pkgs.libGLU
+            pkgs.freeglut
           ];
 
           # Add ghcup installation script
@@ -34,6 +43,7 @@
           '';
         };
 
-        packages.default = pkgs.haskellPackages.callCabal2nix "lpfp-book-01" ./. {};
-      });
+        packages.default = pkgs.haskellPackages.callCabal2nix "lpfp-book-01" ./. { };
+      }
+    );
 }
